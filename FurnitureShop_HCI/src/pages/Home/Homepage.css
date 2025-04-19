@@ -3,11 +3,13 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
 }
 
 body {
-  background-color: #f5f6f8;
+  background-color: #f8fafc;
+  color: #1e293b;
 }
 
 .designhub-container {
@@ -15,6 +17,9 @@ body {
   margin: 0 auto;
   padding: 0 20px;
   width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Header */
@@ -23,15 +28,23 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 16px 0;
-  border-bottom: 1px solid #eaeaea;
+  border-bottom: 1px solid #e2e8f0;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .logo {
   font-size: 24px;
-  font-weight: bold;
-  color: #000;
+  font-weight: 700;
+  color: #3b82f6;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo::before {
+  content: "🛋️";
+  font-size: 28px;
 }
 
 .header-right {
@@ -45,6 +58,12 @@ body {
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  color: #64748b;
+  transition: color 0.2s;
+}
+
+.notifications:hover {
+  color: #3b82f6;
 }
 
 .notification-icon {
@@ -62,7 +81,7 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background-color: #e0e0e0;
+  background-color: #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,12 +97,14 @@ body {
 .dropdown-icon {
   font-size: 10px;
   margin-left: 4px;
+  color: #64748b;
 }
 
 /* Main Content */
 .main-content {
   padding: 20px 0;
   width: 100%;
+  flex: 1;
 }
 
 /* Welcome Section */
@@ -93,41 +114,42 @@ body {
   align-items: center;
   background-color: #fff;
   padding: 32px;
-  border-radius: 8px;
+  border-radius: 12px;
   margin-bottom: 32px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   width: 100%;
 }
 
 .welcome-text h1 {
   font-size: 28px;
-  font-weight: bold;
+  font-weight: 700;
   margin-bottom: 8px;
-  color: #000;
+  color: #1e293b;
 }
 
 .welcome-text p {
-  color: #666;
+  color: #64748b;
   font-size: 16px;
 }
 
 .date-display {
-  background-color: #f5f6f8;
+  background-color: #f1f5f9;
   padding: 16px 24px;
   border-radius: 8px;
   min-width: 200px;
+  text-align: center;
 }
 
 .date-label {
   font-size: 14px;
-  color: #666;
+  color: #64748b;
   margin-bottom: 4px;
 }
 
 .current-date {
   font-size: 20px;
-  font-weight: bold;
-  color: #000;
+  font-weight: 600;
+  color: #1e293b;
 }
 
 /* Quick Actions */
@@ -141,40 +163,43 @@ body {
 
 .action-card {
   background-color: #fff;
-  border-radius: 8px;
-  padding: 32px;
+  border-radius: 12px;
+  padding: 32px 24px;
   text-align: center;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.3s ease;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
 }
 
 .action-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border-color: #3b82f6;
 }
 
 .action-icon {
   width: 64px;
   height: 64px;
-  background-color: #f5f6f8;
+  background-color: #eff6ff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 20px;
   font-size: 26px;
+  color: #3b82f6;
 }
 
 .action-card h2 {
   font-size: 18px;
-  font-weight: bold;
+  font-weight: 600;
   margin-bottom: 8px;
-  color: #000;
+  color: #1e293b;
 }
 
 .action-card p {
-  color: #666;
+  color: #64748b;
   font-size: 14px;
 }
 
@@ -193,21 +218,22 @@ body {
 
 .section-header h2 {
   font-size: 22px;
-  font-weight: bold;
-  color: #000;
+  font-weight: 700;
+  color: #1e293b;
 }
 
 .view-all {
   display: flex;
   align-items: center;
   text-decoration: none;
-  color: #555;
+  color: #64748b;
   font-size: 14px;
+  font-weight: 500;
   transition: color 0.2s;
 }
 
 .view-all:hover {
-  color: #000;
+  color: #3b82f6;
 }
 
 .arrow-icon {
@@ -223,25 +249,47 @@ body {
 
 .project-card {
   background-color: #fff;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.3s ease;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
 }
 
 .project-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border-color: #3b82f6;
 }
 
 .project-thumbnail {
-  height: 160px;
-  background-color: #3f4756;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 180px;
+  background-color: #e2e8f0;
+  position: relative;
+  overflow: hidden;
+}
+
+.project-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.project-card:hover .project-thumbnail img {
+  transform: scale(1.05);
+}
+
+.project-type-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: #3b82f6;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 12px;
   font-weight: 500;
 }
 
@@ -251,16 +299,69 @@ body {
 
 .project-info h3 {
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 600;
   margin-bottom: 8px;
-  color: #000;
+  color: #1e293b;
 }
 
 .project-meta {
   display: flex;
   justify-content: space-between;
   font-size: 13px;
-  color: #666;
+  color: #64748b;
+}
+
+/* Getting Started Section */
+.getting-started {
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.getting-started h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 24px;
+}
+
+.tutorial-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.tutorial-step {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.step-number {
+  width: 36px;
+  height: 36px;
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-weight: 600;
+}
+
+.tutorial-step h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #1e293b;
+}
+
+.tutorial-step p {
+  color: #64748b;
+  font-size: 14px;
 }
 
 /* Footer */
@@ -269,11 +370,11 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 20px 0;
-  border-top: 1px solid #eaeaea;
+  border-top: 1px solid #e2e8f0;
   font-size: 14px;
-  color: #666;
+  color: #64748b;
   width: 100%;
-  margin-top: 20px;
+  margin-top: auto;
 }
 
 .copyright {
@@ -287,32 +388,58 @@ body {
 
 .footer-link {
   text-decoration: none;
-  color: #666;
+  color: #64748b;
   display: flex;
   align-items: center;
   gap: 6px;
   transition: color 0.2s;
+  font-weight: 500;
 }
 
 .footer-link:hover {
-  color: #000;
+  color: #3b82f6;
 }
 
 /* Responsive adjustments */
+@media (max-width: 1024px) {
+  .tutorial-steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
   .welcome-section {
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
   }
-  
+
   .quick-actions,
-  .projects-grid {
+  .projects-grid,
+  .tutorial-steps {
     grid-template-columns: 1fr;
   }
-  
+
   .footer {
     flex-direction: column;
     gap: 16px;
+    text-align: center;
   }
-} 
+
+  .header-right {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 20px;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
