@@ -48,24 +48,6 @@ function Homepage() {
 
   return (
     <div className="designhub-container">
-      {/* Header */}
-      <header className="header">
-        <div className="logo">DesignHub 3D</div>
-        <div className="header-right">
-          <div className="notifications">
-            <span className="notification-icon">🔔</span>
-            <span>Notifications</span>
-          </div>
-          <div className="user-profile">
-            <div className="avatar">
-              <img src="/avatar-placeholder.svg" alt="User avatar" />
-            </div>
-            <span>{userName}</span>
-            <span className="dropdown-icon">▼</span>
-          </div>
-        </div>
-      </header>
-
       {/* Main Content */}
       <main className="main-content">
         {/* Welcome Section */}

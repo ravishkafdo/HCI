@@ -1,0 +1,21 @@
+.catalog {
+  height: 100%;
+}
+
+.catalog-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.catalog-item {
+  justify-content: flex-start !important;
+  padding: 0.8rem 1rem !important;
+  text-transform: none !important;
+}
+
+.item-icon {
+  font-size: 1.5rem;
+  margin-right: 0.8rem;
+}

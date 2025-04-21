@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Texture Generator</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    canvas { border: 1px solid #ccc; margin: 10px 0; }
+    .texture-container { margin-bottom: 30px; }
+    button { padding: 10px; cursor: pointer; margin-right: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Texture Generator</h1>
+  <p>Click each button to download the texture files to the textures folder.</p>
+  
+  <div class="texture-container">
+    <h2>Wood Texture</h2>
+    <canvas id="woodCanvas" width="256" height="256"></canvas>
+    <br>
+    <button onclick="downloadTexture('woodCanvas', 'wood.jpg')">Download wood.jpg</button>
+  </div>
+  
+  <div class="texture-container">
+    <h2>Floor Texture</h2>
+    <canvas id="floorCanvas" width="256" height="256"></canvas>
+    <br>
+    <button onclick="downloadTexture('floorCanvas', 'floor.jpg')">Download floor.jpg</button>
+  </div>
+  
+  <div class="texture-container">
+    <h2>Wall Texture</h2>
+    <canvas id="wallCanvas" width="256" height="256"></canvas>
+    <br>
+    <button onclick="downloadTexture('wallCanvas', 'wall.jpg')">Download wall.jpg</button>
+  </div>
+  
+  <div class="texture-container">
+    <h2>Fabric Texture</h2>
+    <canvas id="fabricCanvas" width="256" height="256"></canvas>
+    <br>
+    <button onclick="downloadTexture('fabricCanvas', 'fabric.jpg')">Download fabric.jpg</button>
+  </div>
+
+  <script>
+    // Generate wood texture
+    function drawWoodTexture() {
+      const canvas = document.getElementById('woodCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Base color
+      ctx.fillStyle = '#8B4513';
+      ctx.fillRect(0, 0, 256, 256);
+      
+      // Add grain
+      for (let i = 0; i < 20; i++) {
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(139, 69, 19, ${Math.random() * 0.3 + 0.1})`;
+        ctx.lineWidth = Math.random() * 5 + 2;
+        ctx.moveTo(0, Math.random() * 256);
+        ctx.lineTo(256, Math.random() * 256);
+        ctx.stroke();
+      }
+    }
+    
+    // Generate floor texture
+    function drawFloorTexture() {
+      const canvas = document.getElementById('floorCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Base color
+      ctx.fillStyle = '#A9A9A9';
+      ctx.fillRect(0, 0, 256, 256);
+      
+      // Grid pattern
+      ctx.strokeStyle = '#8D8D8D';
+      ctx.lineWidth = 2;
+      for (let i = 0; i < 256; i += 32) {
+        ctx.beginPath();
+        ctx.moveTo(0, i);
+        ctx.lineTo(256, i);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, 256);
+        ctx.stroke();
+      }
+    }
+    
+    // Generate wall texture
+    function drawWallTexture() {
+      const canvas = document.getElementById('wallCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Base color
+      ctx.fillStyle = '#E0E0E0';
+      ctx.fillRect(0, 0, 256, 256);
+      
+      // Add subtle pattern
+      for (let i = 0; i < 256; i += 16) {
+        for (let j = 0; j < 256; j += 16) {
+          ctx.fillStyle = `rgba(200, 200, 200, ${Math.random() * 0.1})`;
+          ctx.fillRect(i, j, 16, 16);
+        }
+      }
+    }
+    
+    // Generate fabric texture
+    function drawFabricTexture() {
+      const canvas = document.getElementById('fabricCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Base color
+      ctx.fillStyle = '#4682B4';
+      ctx.fillRect(0, 0, 256, 256);
+      
+      // Add fabric pattern
+      for (let i = 0; i < 256; i += 4) {
+        for (let j = 0; j < 256; j += 4) {
+          if ((i + j) % 8 === 0) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.fillRect(i, j, 4, 4);
+          }
+        }
+      }
+    }
+    
+    // Function to download canvas as image
+    function downloadTexture(canvasId, filename) {
+      const canvas = document.getElementById(canvasId);
+      const link = document.createElement('a');
+      link.download = filename;
+      link.href = canvas.toDataURL('image/jpeg', 0.9);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    
+    // Generate all textures when page loads
+    window.onload = function() {
+      drawWoodTexture();
+      drawFloorTexture();
+      drawWallTexture();
+      drawFabricTexture();
+    };
+  </script>
+</body>
+</html> 
