@@ -4,6 +4,7 @@ const cors = require("cors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
+const setupAdminUser = require("./config/setupAdmin");
 const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
 const { createServer } = require("http");
@@ -27,7 +28,15 @@ const io = new Server(httpServer, {
 });
 
 // Database connection
-connectDB();
+connectDB().then(() => {
+  // Set up default admin user after DB connection
+  if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
+    setupAdminUser();
+  }
+}).catch(err => {
+  console.error("Failed to connect to database:", err);
+  process.exit(1);
+});
 
 // Middleware
 app.use(

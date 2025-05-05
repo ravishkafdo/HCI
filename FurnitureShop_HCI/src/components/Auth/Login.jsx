@@ -59,33 +59,6 @@ const Login = () => {
     } catch (error) {
       console.error("Login Error:", error);
       setError(error.message || "Login failed. Please try again.");
-      
-      // Fallback to mock login for demo if server is not available
-      if (formData.email === "admin@example.com" && formData.password === "adminpass") {
-        const userData = {
-          id: "a123",
-          name: "Admin User",
-          email: formData.email,
-          role: "admin"
-        };
-        
-        localStorage.setItem("token", "mock-admin-token");
-        localStorage.setItem("user", JSON.stringify(userData));
-        navigate("/admin");
-        return;
-      } else if (formData.email === "designer@example.com" && formData.password === "password") {
-        const userData = {
-          id: "d123",
-          name: "John Designer",
-          email: formData.email,
-          role: "designer"
-        };
-        
-        localStorage.setItem("token", "mock-designer-token");
-        localStorage.setItem("user", JSON.stringify(userData));
-        navigate("/");
-        return;
-      }
     } finally {
       setIsLoading(false);
     }

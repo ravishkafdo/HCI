@@ -28,6 +28,46 @@ const processUploads = (req, res, next) => {
   next();
 };
 
+// Parse JSON fields
+const parseJsonFields = (req, res, next) => {
+  // Parse dimensions JSON
+  if (req.body.dimensions && typeof req.body.dimensions === 'string') {
+    try {
+      req.body.dimensions = JSON.parse(req.body.dimensions);
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid dimensions format'
+      });
+    }
+  }
+  
+  // Parse materials and colors JSON
+  if (req.body.materials && typeof req.body.materials === 'string') {
+    try {
+      req.body.materials = JSON.parse(req.body.materials);
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid materials format'
+      });
+    }
+  }
+  
+  if (req.body.colors && typeof req.body.colors === 'string') {
+    try {
+      req.body.colors = JSON.parse(req.body.colors);
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid colors format'
+      });
+    }
+  }
+  
+  next();
+};
+
 // Public routes
 router.get('/', productController.getProducts);
 router.get('/:id', productController.getProduct);
@@ -40,6 +80,7 @@ router.post(
   uploadProduct,
   handleUploadError,
   processUploads,
+  parseJsonFields,
   productController.createProduct
 );
 
@@ -50,6 +91,7 @@ router.put(
   uploadProduct,
   handleUploadError,
   processUploads,
+  parseJsonFields,
   productController.updateProduct
 );
 

@@ -12,6 +12,7 @@ const connectDB = async () => {
     });
 
     console.log("MongoDB Connected");
+    return mongoose.connection; // Return the connection instance
   } catch (error) {
     console.error("\nMongoDB Connection Failed:\n");
     console.error("Full Error:", error);
@@ -20,7 +21,8 @@ const connectDB = async () => {
     console.error("2. Check your connection string in .env file");
     console.error("3. Ensure your database user has proper privileges");
     console.error("4. Verify your network connection");
-    process.exit(1);
+    // Instead of process.exit, throw the error to be caught by caller
+    throw error;
   }
 };
 
