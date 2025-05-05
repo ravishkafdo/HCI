@@ -4,25 +4,35 @@
   align-items: center;
   min-height: 100vh;
   background-color: #f5f5f5;
+  padding: 2rem;
 }
 
 .auth-form {
   background: white;
-  padding: 2rem;
+  padding: 2.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
 }
 
 .auth-form h2 {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
   text-align: center;
   color: #333;
+  font-size: 1.8rem;
+}
+
+.auth-subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-group label {
@@ -30,14 +40,53 @@
   margin-bottom: 0.5rem;
   font-weight: 500;
   color: #555;
+  font-size: 0.9rem;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+.form-group input::placeholder {
+  color: #aaa;
+}
+
+.form-extra {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+}
+
+.remember-me input {
+  margin-right: 0.5rem;
+}
+
+.forgot-password {
+  color: #4a90e2;
+  text-decoration: none;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
 }
 
 .auth-button {
@@ -51,32 +100,42 @@
   font-weight: 500;
   cursor: pointer;
   margin-top: 1rem;
+  transition: background-color 0.2s;
 }
 
 .auth-button:hover {
   background-color: #3a7bc8;
 }
 
+.auth-button:disabled {
+  background-color: #a5c5ee;
+  cursor: not-allowed;
+}
+
 .error-message {
   color: #f44336;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
   background-color: #ffebee;
   border-radius: 4px;
+  font-size: 0.9rem;
 }
 
 .success-message {
   color: #4caf50;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
   background-color: #e8f5e9;
   border-radius: 4px;
+  font-size: 0.9rem;
 }
 
 .auth-footer {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   text-align: center;
   color: #666;
+  border-top: 1px solid #eee;
+  padding-top: 1.5rem;
 }
 
 .auth-footer span {
@@ -87,4 +146,18 @@
 
 .auth-footer span:hover {
   text-decoration: underline;
+}
+
+.auth-note {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.auth-note p {
+  margin: 0.25rem 0;
 }

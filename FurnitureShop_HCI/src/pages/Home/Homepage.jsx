@@ -6,7 +6,7 @@ function Homepage() {
   const navigate = useNavigate();
 
   // User data
-  const userName = "Alex";
+  const userName = "Designer"; // Default name for non-authenticated users
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString("en-US", {
     month: "long",
@@ -14,157 +14,179 @@ function Homepage() {
     year: "numeric",
   });
 
-  // Sample recent projects data
-  const recentProjects = [
+  // Sample furniture catalog data
+  const furnitureItems = [
     {
       id: 1,
-      title: "Living Room Design",
-      type: "3D Furniture",
-      artboards: 5,
-      date: "April 15, 2025",
-      thumbnail: "/thumbnails/living-room.jpg",
+      title: "Modern Sofa Set",
+      category: "Living Room",
+      price: "$1,299.99",
+      rating: 4.7,
+      thumbnail: "/thumbnails/modern-sofa.jpg",
     },
     {
       id: 2,
-      title: "Office Space",
-      type: "3D Furniture",
-      artboards: 8,
-      date: "April 10, 2025",
-      thumbnail: "/thumbnails/office.jpg",
+      title: "Executive Office Desk",
+      category: "Office",
+      price: "$849.99",
+      rating: 4.5,
+      thumbnail: "/thumbnails/office-desk.jpg",
     },
     {
       id: 3,
-      title: "Bedroom Concept",
-      type: "3D Furniture",
-      artboards: 6,
-      date: "April 5, 2025",
-      thumbnail: "/thumbnails/bedroom.jpg",
+      title: "Luxury King Bed",
+      category: "Bedroom",
+      price: "$1,599.99",
+      rating: 4.8,
+      thumbnail: "/thumbnails/king-bed.jpg",
+    },
+    {
+      id: 4,
+      title: "Dining Table Set",
+      category: "Dining Room",
+      price: "$1,199.99",
+      rating: 4.6,
+      thumbnail: "/thumbnails/dining-table.jpg",
+    },
+    {
+      id: 5,
+      title: "Accent Chair",
+      category: "Living Room",
+      price: "$399.99",
+      rating: 4.4,
+      thumbnail: "/thumbnails/accent-chair.jpg",
+    },
+    {
+      id: 6,
+      title: "Bookshelf Unit",
+      category: "Storage",
+      price: "$299.99",
+      rating: 4.3,
+      thumbnail: "/thumbnails/bookshelf.jpg",
     },
   ];
 
-  const handleCreateNewDesign = () => {
-    navigate("/design");
+  // Filter categories
+  const categories = [
+    "All",
+    "Living Room",
+    "Bedroom",
+    "Dining Room",
+    "Office",
+    "Storage",
+  ];
+
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
+
+  const filteredFurniture = selectedCategory === "All" 
+    ? furnitureItems 
+    : furnitureItems.filter(item => item.category === selectedCategory);
+
+  const handleViewDesign = (id) => {
+    navigate(`/design/${id}`);
   };
 
   return (
-    <div className="designhub-container">
-      {/* Main Content */}
-      <main className="main-content">
-        {/* Welcome Section */}
-        <section className="welcome-section">
-          <div className="welcome-text">
-            <h1>Welcome back, {userName}!</h1>
-            <p>Design, visualize and customize furniture layouts in 3D.</p>
-          </div>
-          <div className="date-display">
-            <p className="date-label">Today's Date</p>
-            <p className="current-date">{formattedDate}</p>
-          </div>
-        </section>
+    <div className="furniture-shop-container">
+      {/* Header Banner */}
+      <section className="hero-banner">
+        <div className="hero-content">
+          <h1>Transform Your Space</h1>
+          <p>Explore our curated collection of premium furniture designs</p>
+          <button className="cta-button" onClick={() => navigate("/design")}>
+            Start New Design
+          </button>
+        </div>
+      </section>
 
-        {/* Quick Actions */}
-        <section className="quick-actions">
-          <div className="action-card" onClick={handleCreateNewDesign}>
-            <div className="action-icon">
-              <span>✏️</span>
-            </div>
-            <h2>New 3D Design</h2>
-            <p>Start a new furniture layout</p>
-          </div>
+      {/* Filter Categories */}
+      <section className="category-filter">
+        <h2>Shop by Category</h2>
+        <div className="category-tabs">
+          {categories.map((category) => (
+            <button
+              key={category}
+              className={`category-tab ${selectedCategory === category ? "active" : ""}`}
+              onClick={() => handleCategoryChange(category)}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      </section>
 
-          <div className="action-card">
-            <div className="action-icon">
-              <span>📂</span>
-            </div>
-            <h2>My Designs</h2>
-            <p>Access your saved projects</p>
-          </div>
-
-          <div className="action-card">
-            <div className="action-icon">
-              <span>🎨</span>
-            </div>
-            <h2>Templates</h2>
-            <p>Use pre-made room layouts</p>
-          </div>
-        </section>
-
-        {/* Recent Projects */}
-        <section className="recent-projects">
-          <div className="section-header">
-            <h2>Your Recent 3D Projects</h2>
-            <a href="#" className="view-all">
-              View all <span className="arrow-icon">→</span>
-            </a>
-          </div>
-
-          <div className="projects-grid">
-            {recentProjects.map((project) => (
-              <div
-                key={project.id}
-                className="project-card"
-                onClick={() => navigate(`/design/${project.id}`)}
-              >
-                <div className="project-thumbnail">
-                  <img src={project.thumbnail} alt={project.title} />
-                  <div className="project-type-badge">{project.type}</div>
+      {/* Furniture Catalog */}
+      <section className="furniture-catalog">
+        <div className="catalog-grid">
+          {filteredFurniture.map((item) => (
+            <div key={item.id} className="furniture-card">
+              <div className="furniture-thumbnail">
+                <img src={item.thumbnail} alt={item.title} />
+              </div>
+              <div className="furniture-details">
+                <h3>{item.title}</h3>
+                <span className="furniture-category">{item.category}</span>
+                <div className="furniture-meta">
+                  <span className="furniture-price">{item.price}</span>
+                  <span className="furniture-rating">★ {item.rating}</span>
                 </div>
-                <div className="project-info">
-                  <h3>{project.title}</h3>
-                  <div className="project-meta">
-                    <span className="artboards-count">
-                      📄 {project.artboards} items
-                    </span>
-                    <span className="project-date">{project.date}</span>
-                  </div>
+                <div className="furniture-actions">
+                  <button 
+                    className="view-design-btn"
+                    onClick={() => handleViewDesign(item.id)}
+                  >
+                    View Design
+                  </button>
+                  <button className="add-to-cart-btn">
+                    Add to Cart
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
+            </div>
+          ))}
+        </div>
+      </section>
 
-        {/* Getting Started Section */}
-        <section className="getting-started">
-          <h2>Getting Started with 3D Design</h2>
-          <div className="tutorial-steps">
-            <div className="tutorial-step">
-              <div className="step-number">1</div>
-              <h3>Create a Room</h3>
-              <p>Set dimensions and wall colors for your space</p>
-            </div>
-            <div className="tutorial-step">
-              <div className="step-number">2</div>
-              <h3>Add Furniture</h3>
-              <p>Drag and drop items from our catalog</p>
-            </div>
-            <div className="tutorial-step">
-              <div className="step-number">3</div>
-              <h3>Customize</h3>
-              <p>Adjust colors, sizes and positions</p>
-            </div>
-            <div className="tutorial-step">
-              <div className="step-number">4</div>
-              <h3>Visualize</h3>
-              <p>View your design in 3D from any angle</p>
-            </div>
+      {/* Features Section */}
+      <section className="features-section">
+        <h2>Why Choose Our Designs</h2>
+        <div className="features-grid">
+          <div className="feature-card">
+            <div className="feature-icon">🏠</div>
+            <h3>Visualize in Your Space</h3>
+            <p>See how furniture fits in your room with our 3D viewer</p>
           </div>
-        </section>
-      </main>
+          <div className="feature-card">
+            <div className="feature-icon">🎨</div>
+            <h3>Customizable Options</h3>
+            <p>Personalize colors and materials to match your style</p>
+          </div>
+          <div className="feature-card">
+            <div className="feature-icon">📐</div>
+            <h3>Precise Measurements</h3>
+            <p>Ensure perfect fit with accurate sizing tools</p>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="footer">
         <div className="copyright">
-          © 2025 DesignHub 3D. All rights reserved.
+          © 2023 Furniture Design Studio. All rights reserved.
         </div>
         <div className="footer-links">
           <a href="#" className="footer-link">
-            <span className="info-icon">ℹ️</span> Tutorials
+            Help
           </a>
           <a href="#" className="footer-link">
-            <span className="privacy-icon">🔒</span> Privacy
+            Privacy
           </a>
           <a href="#" className="footer-link">
-            <span className="terms-icon">📄</span> Terms
+            Terms
           </a>
         </div>
       </footer>
