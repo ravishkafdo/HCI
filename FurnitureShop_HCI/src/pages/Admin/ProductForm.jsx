@@ -272,6 +272,8 @@ function ProductForm() {
       
       // Get auth token
       const token = localStorage.getItem("token");
+      console.log("Token from localStorage:", token);
+      
       if (!token) {
         setError("You must be logged in to perform this action");
         setLoading(false);
@@ -285,6 +287,9 @@ function ProductForm() {
       
       const method = isEditMode ? "PUT" : "POST";
       
+      console.log("Making request to:", url);
+      console.log("Auth header:", `Bearer ${token}`);
+      
       // Submit form
       const response = await fetch(url, {
         method: method,
@@ -295,7 +300,9 @@ function ProductForm() {
         credentials: "include"
       });
       
+      console.log("Response status:", response.status);
       const data = await response.json();
+      console.log("Response data:", data);
       
       if (!response.ok) {
         throw new Error(data.message || "Failed to save product");
