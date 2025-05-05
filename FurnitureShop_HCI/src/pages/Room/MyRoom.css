@@ -1,0 +1,323 @@
+/* MyRoom.css */
+.my-room-page {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.room-header h1 {
+  font-size: 2rem;
+  color: #333;
+  margin: 0;
+}
+
+.room-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.toggle-walls-btn,
+.save-room-btn,
+.inventory-btn,
+.shop-btn {
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.toggle-walls-btn {
+  background-color: #f0f0f0;
+  color: #555;
+}
+
+.toggle-walls-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.save-room-btn {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.save-room-btn:hover {
+  background-color: #3a7bc8;
+}
+
+.save-room-btn:disabled {
+  background-color: #cccccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.inventory-btn {
+  background-color: #66bb6a;
+  color: white;
+}
+
+.inventory-btn:hover {
+  background-color: #55a759;
+}
+
+.shop-btn {
+  background-color: #ff9800;
+  color: white;
+}
+
+.shop-btn:hover {
+  background-color: #e68900;
+}
+
+/* Save success notification */
+.save-success {
+  background-color: #e8f5e9;
+  color: #4caf50;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  text-align: center;
+  animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Room container with canvas and sidebar */
+.room-container {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.5rem;
+  height: calc(100vh - 150px);
+  min-height: 600px;
+}
+
+/* Canvas container */
+.room-canvas {
+  position: relative;
+  height: 100%;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* Sidebar */
+.room-sidebar {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.room-sidebar h2 {
+  font-size: 1.3rem;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Empty room prompt */
+.empty-room {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 200px;
+  color: #666;
+}
+
+.empty-room p {
+  margin-bottom: 1rem;
+}
+
+.empty-room button {
+  padding: 0.7rem 1.2rem;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.empty-room button:hover {
+  background-color: #3a7bc8;
+}
+
+/* Room items list */
+.room-items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.room-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.room-item:hover {
+  background-color: #f5f9ff;
+}
+
+.room-item.selected {
+  background-color: #e3f2fd;
+  border-left: 3px solid #4a90e2;
+}
+
+.item-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+
+.item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item-info {
+  flex-grow: 1;
+}
+
+.item-title {
+  display: block;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.3rem;
+}
+
+.item-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.select-btn,
+.remove-btn {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.select-btn {
+  background-color: #e3f2fd;
+  color: #4a90e2;
+}
+
+.select-btn:hover {
+  background-color: #bbdefb;
+}
+
+.remove-btn {
+  background-color: #ffebee;
+  color: #ff5252;
+}
+
+.remove-btn:hover {
+  background-color: #ffcdd2;
+}
+
+/* Controls help section */
+.controls-help {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.controls-help h3 {
+  font-size: 1rem;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.controls-help ul {
+  padding-left: 1.2rem;
+  margin: 0;
+}
+
+.controls-help li {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.3rem;
+}
+
+/* 3D Model label */
+.model-label {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Responsive Layout */
+@media (max-width: 1024px) {
+  .room-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+  }
+  
+  .room-canvas {
+    height: 500px;
+  }
+  
+  .room-sidebar {
+    max-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .room-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .room-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+} 

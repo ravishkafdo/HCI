@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
   },
   mobileNumber: { type: String },
   password: { type: String, required: true, minlength: 6 },
+  role: { type: String, enum: ['user', 'designer', 'admin'], default: 'user' },
 });
 
 // Password hashing middleware

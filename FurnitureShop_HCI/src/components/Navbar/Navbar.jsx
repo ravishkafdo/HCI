@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Navbar.css";
 
-const Navbar = () => {
+const Navbar = ({ isAuthenticated }) => {
   const [user, setUser] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -14,7 +14,7 @@ const Navbar = () => {
     if (userData) {
       setUser(JSON.parse(userData));
     }
-  }, [navigate]); // Re-run when navigation occurs
+  }, [navigate, isAuthenticated]); // Re-run when navigation or auth status changes
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -55,11 +55,15 @@ const Navbar = () => {
         {/* Navigation Links */}
         <div className="navbar-links desktop-nav">
           <Link to="/" className="nav-link">Home</Link>
-          <Link to="/design" className="nav-link">Create Design</Link>
+          <Link to="/products" className="nav-link">Shop</Link>
+          <Link to="/design" className="nav-link">Design</Link>
+          <Link to="/my-room" className="nav-link">My Room</Link>
           {user && user.role === "designer" && (
             <Link to="/designs" className="nav-link">My Designs</Link>
           )}
-          <Link to="/gallery" className="nav-link">Design Gallery</Link>
+          {user && user.role === "admin" && (
+            <Link to="/admin" className="nav-link admin-link">Admin Dashboard</Link>
+          )}
         </div>
         
         {/* Mobile Menu Toggle */}
@@ -92,12 +96,20 @@ const Navbar = () => {
                     <Link to="/profile" className="dropdown-link">
                       My Profile
                     </Link>
-                    <Link to="/design" className="dropdown-link">
-                      Create New Design
+                    <Link to="/my-room" className="dropdown-link">
+                      My Room
+                    </Link>
+                    <Link to="/my-inventory" className="dropdown-link">
+                      My Inventory
                     </Link>
                     {user.role === "designer" && (
                       <Link to="/designs" className="dropdown-link">
                         My Designs
+                      </Link>
+                    )}
+                    {user.role === "admin" && (
+                      <Link to="/admin" className="dropdown-link">
+                        Admin Dashboard
                       </Link>
                     )}
                   </div>
@@ -120,7 +132,7 @@ const Navbar = () => {
                 className="login-btn" 
                 onClick={() => navigate("/login")}
               >
-                Designer Login
+                Login
               </button>
             </div>
           )}
@@ -133,17 +145,28 @@ const Navbar = () => {
           <Link to="/" className="menu-link" onClick={() => setMenuOpen(false)}>
             Home
           </Link>
+          <Link to="/products" className="menu-link" onClick={() => setMenuOpen(false)}>
+            Shop
+          </Link>
           <Link to="/design" className="menu-link" onClick={() => setMenuOpen(false)}>
-            Create Design
+            Design
+          </Link>
+          <Link to="/my-room" className="menu-link" onClick={() => setMenuOpen(false)}>
+            My Room
+          </Link>
+          <Link to="/my-inventory" className="menu-link" onClick={() => setMenuOpen(false)}>
+            My Inventory
           </Link>
           {user && user.role === "designer" && (
             <Link to="/designs" className="menu-link" onClick={() => setMenuOpen(false)}>
               My Designs
             </Link>
           )}
-          <Link to="/gallery" className="menu-link" onClick={() => setMenuOpen(false)}>
-            Design Gallery
-          </Link>
+          {user && user.role === "admin" && (
+            <Link to="/admin" className="menu-link admin-link" onClick={() => setMenuOpen(false)}>
+              Admin Dashboard
+            </Link>
+          )}
         </div>
       )}
     </nav>

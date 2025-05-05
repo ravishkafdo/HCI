@@ -16,7 +16,7 @@ const generateToken = (userId) => {
 // @desc    Register new user
 exports.register = async (req, res) => {
   try {
-    const { name, email, mobileNumber, password } = req.body;
+    const { name, email, mobileNumber, password, role } = req.body;
 
     // Validate required fields
     if (!name || !email || !password) {
@@ -35,8 +35,14 @@ exports.register = async (req, res) => {
       });
     }
 
-    // Create new user
-    const user = new User({ name, email, mobileNumber, password });
+    // Create new user with role (default to 'user' if not specified)
+    const user = new User({ 
+      name, 
+      email, 
+      mobileNumber, 
+      password,
+      role: role || 'user'  // Add role field
+    });
     await user.save();
 
     // Generate token using JWT_SECRET from .env
@@ -60,6 +66,63 @@ exports.register = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Registration failed",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+};
+
+// @desc    Create admin user (development only)
+// @route   POST /api/auth/create-admin
+// @access  Public (should be restricted in production)
+exports.createAdmin = async (req, res) => {
+  try {
+    // Check if we're in development mode
+    if (process.env.NODE_ENV === 'production') {
+      return res.status(403).json({
+        success: false,
+        message: "This endpoint is disabled in production mode"
+      });
+    }
+
+    const { name, email, password } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Name, email and password are required",
+      });
+    }
+
+    // Check for existing user
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Email already in use",
+      });
+    }
+
+    // Create admin user
+    const adminUser = new User({
+      name,
+      email,
+      password,
+      role: 'admin'
+    });
+    
+    await adminUser.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Admin user created successfully",
+      email: adminUser.email
+    });
+  } catch (error) {
+    console.error("Admin Creation Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create admin user",
       error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
