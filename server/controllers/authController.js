@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const config = require("../config/config");
 const { sendWelcomeEmail } = require("../services/emailService");
 
+
 // Helper function to generate token
 const generateToken = (userId) => {
   return jwt.sign(
