@@ -1,8 +1,29 @@
 /* MyInventory.css */
-.inventory-page {
-  max-width: 1400px;
+/* Main layout */
+.inventory-main-container {
+  display: flex;
+  gap: 1.5rem;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 2rem 1rem;
+}
+
+.inventory-page {
+  flex: 3;
+  max-width: 1100px;
+}
+
+.all-furniture-panel {
+  flex: 1;
+  min-width: 300px;
+  max-width: 400px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  height: calc(100vh - 4rem);
+  position: sticky;
+  top: 2rem;
+  overflow-y: auto;
 }
 
 .inventory-header {
@@ -189,37 +210,36 @@
   padding: 0 1.2rem 1.2rem;
 }
 
-.item-actions .remove-btn {
-  grid-column: 1 / -1;
+.saved-item-actions {
+  grid-template-columns: 1fr 1fr;
 }
 
-.view-btn,
-.room-btn,
+.view-3d-btn,
 .remove-btn {
   padding: 0.7rem 0;
   border: none;
   border-radius: 4px;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.view-btn {
-  background-color: #f0f0f0;
-  color: #555;
-}
-
-.view-btn:hover {
-  background-color: #e0e0e0;
-}
-
-.room-btn {
+.view-3d-btn {
   background-color: #bbdefb;
   color: #1976d2;
 }
 
-.room-btn:hover {
+.view-3d-btn:hover {
   background-color: #90caf9;
+  transform: translateY(-2px);
+}
+
+.view-icon, .remove-icon {
+  font-size: 1.1rem;
 }
 
 .remove-btn {
@@ -229,6 +249,7 @@
 
 .remove-btn:hover {
   background-color: #ffcdd2;
+  transform: translateY(-2px);
 }
 
 /* Admin section styling */
@@ -263,7 +284,231 @@
   background-color: #f57c00;
 }
 
+/* Available Furniture Side Panel */
+.panel-header {
+  padding: 1.2rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.available-furniture-list {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.available-furniture-item {
+  display: flex;
+  flex-direction: column;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+}
+
+.available-furniture-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.furniture-image {
+  height: 150px;
+  position: relative;
+  overflow: hidden;
+}
+
+.furniture-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.save-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+}
+
+.save-button:hover {
+  transform: scale(1.1);
+  background-color: #3a7bc8;
+}
+
+.save-button:disabled {
+  background-color: #66bb6a;
+  cursor: default;
+}
+
+.save-icon, .saved-icon {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.furniture-info {
+  padding: 0.8rem;
+}
+
+.furniture-info h4 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  color: #333;
+}
+
+.furniture-price {
+  margin: 0;
+  color: #4a90e2;
+  font-weight: 600;
+}
+
+/* 3D Model View Modal */
+.model-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.model-modal-content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.close-modal-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #555;
+  z-index: 10;
+}
+
+.model-modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding-right: 30px;
+}
+
+.model-canvas-container {
+  width: 100%;
+  height: 60vh;
+  min-height: 400px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* Panel loading state */
+.panel-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 200px;
+  padding: 2rem;
+  color: #666;
+}
+
+/* Panel loading and error states */
+.panel-loading,
+.panel-error,
+.no-products {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 200px;
+  padding: 2rem;
+  color: #666;
+}
+
+.panel-error {
+  color: #f44336;
+}
+
+.panel-error button,
+.no-products button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.panel-error button:hover,
+.no-products button:hover {
+  background-color: #3a7bc8;
+}
+
+/* Add a local placeholder for images */
+.placeholder-image {
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 0.8rem;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
 /* Responsive styles */
+@media (max-width: 1200px) {
+  .inventory-main-container {
+    flex-direction: column;
+  }
+  
+  .all-furniture-panel {
+    max-width: 100%;
+    height: auto;
+    position: static;
+  }
+  
+  .available-furniture-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   .inventory-header {
     flex-direction: column;
@@ -273,5 +518,15 @@
   .inventory-actions {
     width: 100%;
     justify-content: space-between;
+  }
+  
+  .model-modal-content {
+    width: 95%;
+    padding: 1rem;
+  }
+  
+  .model-canvas-container {
+    height: 50vh;
+    min-height: 300px;
   }
 } 

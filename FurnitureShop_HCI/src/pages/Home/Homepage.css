@@ -10,7 +10,7 @@
 
 /* Hero Banner */
 .hero-banner {
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+  background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),  /* Slightly darker overlay */
               url('/assets/hero-banner.jpg') center/cover no-repeat;
   height: 450px;
   display: flex;
@@ -27,30 +27,34 @@
 }
 
 .hero-content h1 {
-  font-size: 3rem;
+  font-size: 3.5rem; /* Increased size */
   margin-bottom: 1rem;
-  font-weight: 600;
+  font-weight: 700; /* Bolder */
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.2); /* Subtle text shadow */
 }
 
 .hero-content p {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
+  font-size: 1.25rem; /* Slightly larger */
+  margin-bottom: 2.5rem; /* Increased margin */
 }
 
 .cta-button {
   background-color: #ff6b35;
   color: white;
   border: none;
-  padding: 12px 30px;
-  font-size: 1rem;
-  border-radius: 4px;
+  padding: 15px 35px; /* Increased padding */
+  font-size: 1.1rem; /* Increased font size */
+  border-radius: 5px; /* Slightly more rounded */
   cursor: pointer;
   font-weight: 600;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
 .cta-button:hover {
   background-color: #e55a2b;
+  transform: translateY(-2px); /* Slight lift on hover */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
 /* Category Filter */
@@ -73,27 +77,33 @@
   display: flex;
   gap: 1rem;
   overflow-x: auto;
-  padding-bottom: 0.5rem;
+  padding-bottom: 1rem;
 }
 
 .category-tab {
-  padding: 10px 20px;
-  background-color: #f0f0f0;
-  border: none;
-  border-radius: 4px;
+  padding: 12px 24px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 25px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.05rem;
   white-space: nowrap;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  color: #555;
 }
 
 .category-tab:hover {
-  background-color: #e0e0e0;
+  background-color: #f0f0f0;
+  border-color: #ccc;
+  color: #333;
 }
 
 .category-tab.active {
   background-color: #ff6b35;
   color: white;
+  border-color: #ff6b35;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 /* Furniture Catalog */
@@ -121,7 +131,9 @@
 }
 
 .furniture-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-7px); /* More pronounced lift */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Stronger shadow */
+  border: 1px solid #ff6b35; /* Accent border on hover */
 }
 
 .furniture-thumbnail {
@@ -210,49 +222,83 @@
   background-color: #e0e0e0;
 }
 
+.furniture-catalog .catalog-grid p {
+  font-size: 1.1rem;
+  color: #555;
+  text-align: center;
+  padding: 2rem;
+  grid-column: 1 / -1; /* Make it span all columns if grid is empty */
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.error-message {
+  color: #D8000C; /* Standard error red */
+  background-color: #FFD2D2; /* Light red background */
+  border: 1px solid #D8000C;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 1.1rem;
+  grid-column: 1 / -1; /* Ensure it spans the grid like other messages */
+  margin: 1rem 0;
+}
+
 /* Features Section */
 .features-section {
-  background-color: #f0f0f0;
-  padding: 4rem 2rem;
+  background-color: #ffffff;
+  padding: 5rem 2rem;
   text-align: center;
   margin-bottom: 0;
   margin-top: auto;
+  border-top: 1px solid #e0e0e0;
 }
 
 .features-section h2 {
-  margin-bottom: 3rem;
-  font-size: 2rem;
+  margin-bottom: 3.5rem;
+  font-size: 2.2rem;
   color: #333;
+  font-weight: 600;
 }
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2.5rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
 .feature-card {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  background-color: #f9f9f9;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
 }
 
 .feature-icon {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  color: #ff6b35;
 }
 
 .feature-card h3 {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   margin-bottom: 1rem;
   color: #333;
+  font-weight: 600;
 }
 
 .feature-card p {
-  color: #666;
+  font-size: 1rem;
+  color: #555;
   line-height: 1.6;
 }
 

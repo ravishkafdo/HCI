@@ -537,3 +537,327 @@
 .add-button:hover {
   background-color: #3a80d2;
 }
+
+/* Catalog panel tabs */
+.catalog-tabs {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 1rem;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 0.75rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.tab-button:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.tab-button.active {
+  color: #4a90e2;
+  border-bottom-color: #4a90e2;
+}
+
+/* Empty catalog state */
+.empty-catalog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.empty-catalog p {
+  margin-bottom: 1rem;
+  color: #666;
+}
+
+.browse-button {
+  padding: 0.6rem 1.2rem;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.browse-button:hover {
+  background-color: #3a7bc8;
+}
+
+/* Catalog item browse more */
+.catalog-item.browse-more {
+  border: 1px dashed #ccc;
+  background-color: #f9f9f9;
+}
+
+/* Update add button */
+.add-button {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0;
+  border: none;
+  border-radius: 4px;
+  background-color: #4a90e2;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.add-button:disabled {
+  background-color: #66bb6a;
+  cursor: default;
+}
+
+.add-button:hover:not(:disabled) {
+  background-color: #3a7bc8;
+}
+
+/* Position and Rotation Controls */
+.property-panel {
+  width: 320px;
+}
+
+.property-section {
+  padding: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.property-section h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.slider-group {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.slider-group label {
+  margin-bottom: 0.5rem;
+  display: block;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.position-slider,
+.rotation-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e0e0e0;
+  outline: none;
+  margin-bottom: 0.5rem;
+}
+
+.position-slider::-webkit-slider-thumb,
+.rotation-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #4a90e2;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.position-slider::-webkit-slider-thumb:hover,
+.rotation-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.position-slider::-moz-range-thumb,
+.rotation-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #4a90e2;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s;
+}
+
+.position-slider::-moz-range-thumb:hover,
+.rotation-slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
+.slider-value {
+  font-size: 0.85rem;
+  color: #666;
+  text-align: right;
+}
+
+/* Item details in the property panel */
+.item-details {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.item-details p {
+  margin: 0.5rem 0;
+}
+
+.item-details strong {
+  color: #333;
+}
+
+/* Room environment styles */
+.design-canvas {
+  background-color: #e6e6e6;
+}
+
+/* Update the catalog panel tabs to be more visually distinct */
+.catalog-tabs button.active {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+
+/* Wall Colors Panel */
+.wall-colors-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 320px;
+  height: 100%;
+  background-color: white;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  padding-top: 60px;
+  overflow-y: auto;
+}
+
+.wall-color-section {
+  padding: 1rem;
+}
+
+.uniform-color-toggle {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-label input[type="checkbox"] {
+  margin-right: 10px;
+  width: 18px;
+  height: 18px;
+}
+
+.toggle-label span {
+  font-size: 1rem;
+  color: #333;
+}
+
+.color-picker-section {
+  margin-bottom: 1.5rem;
+}
+
+.color-picker-section h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.color-picker-section h4::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.color-picker-section h4.front-wall::before {
+  background-color: var(--front-wall-indicator, #e0e0e0);
+}
+
+.color-picker-section h4.back-wall::before {
+  background-color: var(--back-wall-indicator, #e0e0e0);
+}
+
+.color-picker-section h4.left-wall::before {
+  background-color: var(--left-wall-indicator, #e6e6e6);
+}
+
+.color-picker-section h4.right-wall::before {
+  background-color: var(--right-wall-indicator, #e6e6e6);
+}
+
+.color-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.color-preset {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.1s;
+  border: 1px solid #ddd;
+  position: relative;
+}
+
+.color-preset:hover {
+  transform: scale(1.1);
+  z-index: 1;
+}
+
+.color-preset.selected {
+  box-shadow: 0 0 0 2px #4a90e2;
+}
+
+.color-input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+}
+
+.individual-walls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Tool Icons */
+.walls-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23333'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E");
+  background-size: 24px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
