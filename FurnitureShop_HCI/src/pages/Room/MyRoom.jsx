@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, useRef } from "react";
-import { Canvas, useThree, useFrame } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { 
   OrbitControls, 
   useGLTF, 
@@ -11,19 +11,16 @@ import { Vector3 } from "three";
 import { useNavigate } from "react-router-dom";
 import "./MyRoom.css";
 
-// 3D Model component with transformations
 const FurnitureModel = ({ item, selected, onClick, onPositionChange, onRotationChange }) => {
   const { scene } = useGLTF(`http://localhost:5001${item.modelUrl}`);
   const ref = useRef();
   
   useEffect(() => {
     if (ref.current) {
-      // Update position when it changes
       if (item.position) {
         ref.current.position.set(...item.position);
       }
       
-      // Update rotation when it changes
       if (item.rotation) {
         ref.current.rotation.set(...item.rotation);
       }
@@ -40,7 +37,6 @@ const FurnitureModel = ({ item, selected, onClick, onPositionChange, onRotationC
         showZ={selected}
         onObjectChange={() => {
           if (ref.current) {
-            // Get current position
             const newPosition = [
               ref.current.position.x,
               ref.current.position.y,
@@ -48,7 +44,6 @@ const FurnitureModel = ({ item, selected, onClick, onPositionChange, onRotationC
             ];
             onPositionChange(item._id, newPosition);
             
-            // Get current rotation
             const newRotation = [
               ref.current.rotation.x,
               ref.current.rotation.y,
@@ -76,7 +71,6 @@ const FurnitureModel = ({ item, selected, onClick, onPositionChange, onRotationC
   );
 };
 
-// Room floor and walls
 const Room = ({ showWalls }) => {
   return (
     <group>
@@ -90,22 +84,18 @@ const Room = ({ showWalls }) => {
         <meshStandardMaterial color="#f0f0f0" />
       </mesh>
       
-      {/* Walls (only shown if showWalls is true) */}
       {showWalls && (
         <>
-          {/* Back wall */}
           <mesh position={[0, 5, -10]} receiveShadow>
             <boxGeometry args={[20, 10, 0.2]} />
             <meshStandardMaterial color="#e1e1e1" />
           </mesh>
           
-          {/* Left wall */}
           <mesh position={[-10, 5, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
             <boxGeometry args={[20, 10, 0.2]} />
             <meshStandardMaterial color="#d5d5d5" />
           </mesh>
           
-          {/* Right wall */}
           <mesh position={[10, 5, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
             <boxGeometry args={[20, 10, 0.2]} />
             <meshStandardMaterial color="#d5d5d5" />
@@ -113,7 +103,6 @@ const Room = ({ showWalls }) => {
         </>
       )}
       
-      {/* Grid for better position reference */}
       <Grid 
         infiniteGrid 
         cellSize={1}
@@ -129,12 +118,10 @@ const Room = ({ showWalls }) => {
   );
 };
 
-// Camera controls
 const CameraController = () => {
   const { camera } = useThree();
   
   useEffect(() => {
-    // Set camera position
     camera.position.set(0, 10, 15);
     camera.lookAt(new Vector3(0, 0, 0));
   }, [camera]);
@@ -150,13 +137,11 @@ const MyRoom = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const navigate = useNavigate();
   
-  // Load furniture items from localStorage on component mount
   useEffect(() => {
     const savedItems = JSON.parse(localStorage.getItem('roomItems') || '[]');
     setRoomItems(savedItems);
   }, []);
   
-  // Save updated position
   const handlePositionChange = (itemId, position) => {
     setRoomItems(prev => 
       prev.map(item => 
@@ -167,7 +152,6 @@ const MyRoom = () => {
     );
   };
   
-  // Save updated rotation
   const handleRotationChange = (itemId, rotation) => {
     setRoomItems(prev => 
       prev.map(item => 
@@ -178,27 +162,22 @@ const MyRoom = () => {
     );
   };
   
-  // Handle item selection
   const handleSelectItem = (itemId) => {
     setSelectedItem(prev => prev === itemId ? null : itemId);
   };
   
-  // Clear selection when clicking empty space
   const handleCanvasClick = () => {
     setSelectedItem(null);
   };
   
-  // Remove furniture from room
   const handleRemoveItem = (itemId) => {
     setRoomItems(prev => prev.filter(item => item._id !== itemId));
     setSelectedItem(null);
     
-    // Update localStorage
     const newItems = roomItems.filter(item => item._id !== itemId);
     localStorage.setItem('roomItems', JSON.stringify(newItems));
   };
   
-  // Save room layout
   const handleSaveRoom = async () => {
     if (!roomItems.length) return;
     
@@ -218,10 +197,8 @@ const MyRoom = () => {
       //   })
       // });
       
-      // For now, just save to localStorage
       localStorage.setItem('roomItems', JSON.stringify(roomItems));
       
-      // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       setSaveSuccess(true);
@@ -233,7 +210,6 @@ const MyRoom = () => {
     }
   };
   
-  // Toggle wall visibility
   const handleToggleWalls = () => {
     setShowWalls(prev => !prev);
   };
@@ -241,7 +217,7 @@ const MyRoom = () => {
   return (
     <div className="my-room-page">
       <div className="room-header">
-        <h1>My Custom Room</h1>
+        <h1>My Custom Room Design</h1>
         <div className="room-actions">
           <button
             className="toggle-walls-btn"
@@ -279,7 +255,7 @@ const MyRoom = () => {
       
       <div className="room-container">
         <div className="room-canvas">
-          <Canvas shadows camera={{ position: [0, 10, 15], fov: 50 }}>
+          <Canvas shadows camera={{ position: [0, 10, 15], fov: 50 }} onClick={handleCanvasClick}>
             <CameraController />
             <ambientLight intensity={0.5} />
             <directionalLight 
@@ -316,9 +292,9 @@ const MyRoom = () => {
           <h2>My Furniture</h2>
           {roomItems.length === 0 ? (
             <div className="empty-room">
-              <p>Your room is empty. Add furniture from the products page.</p>
+              <p>Your room is empty. Add furniture from the products page to start designing.</p>
               <button onClick={() => navigate('/products')}>
-                Browse Furniture
+                Browse Furniture Collection
               </button>
             </div>
           ) : (
@@ -333,6 +309,10 @@ const MyRoom = () => {
                     <img 
                       src={`http://localhost:5001${item.thumbnail}`} 
                       alt={item.title}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/thumbnails/default-thumbnail.jpg';
+                      }}
                     />
                   </div>
                   <div className="item-info">
@@ -364,7 +344,7 @@ const MyRoom = () => {
           )}
           
           <div className="controls-help">
-            <h3>Room Controls</h3>
+            <h3>Design Controls</h3>
             <ul>
               <li><strong>Select furniture:</strong> Click on an item in the list or in the room</li>
               <li><strong>Move furniture:</strong> Drag the arrows when an item is selected</li>
@@ -379,4 +359,4 @@ const MyRoom = () => {
   );
 };
 
-export default MyRoom; 
+export default MyRoom;
