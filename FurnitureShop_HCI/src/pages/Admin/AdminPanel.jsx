@@ -15,25 +15,25 @@ function AdminPanel() {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
-  
+
   const navigate = useNavigate();
-  
+
   // Socket.io connection for real-time updates
   useEffect(() => {
     // Join admin room for exclusive updates
     socket.emit("join-admin");
-    
+
     // Listen for product updates
     socket.on("product-updated", (data) => {
       showToast(data.message || "Product catalog updated", "success");
       fetchProducts();
     });
-    
+
     return () => {
       socket.off("product-updated");
     };
   }, []);
-  
+
   // Categories for the filter
   const categories = [
     "All",
@@ -43,27 +43,31 @@ function AdminPanel() {
     "Office",
     "Storage",
   ];
-  
+
   // Fetch products with filters
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      
+
       // Build query parameters
       const params = new URLSearchParams();
-      if (selectedCategory !== "All") params.append("category", selectedCategory);
+      if (selectedCategory !== "All")
+        params.append("category", selectedCategory);
       if (searchTerm) params.append("search", searchTerm);
       params.append("page", currentPage);
       params.append("limit", 10);
-      
-      const response = await fetch(`http://localhost:5001/api/products?${params.toString()}`, {
-        credentials: "include"
-      });
-      
+
+      const response = await fetch(
+        `http://localhost:5001/api/products?${params.toString()}`,
+        {
+          credentials: "include",
+        }
+      );
+
       if (!response.ok) throw new Error("Failed to fetch products");
-      
+
       const data = await response.json();
-      
+
       setProducts(data.products);
       setTotalPages(data.totalPages);
       setLoading(false);
@@ -72,60 +76,61 @@ function AdminPanel() {
       setLoading(false);
     }
   };
-  
+
   // Fetch products when filters or pagination changes
   useEffect(() => {
     fetchProducts();
   }, [selectedCategory, currentPage]);
-  
+
   // Handle search
   const handleSearch = (e) => {
     e.preventDefault();
     setCurrentPage(1); // Reset to first page on new search
     fetchProducts();
   };
-  
+
   // Handle product deletion
   const handleDeleteProduct = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
-    
+    if (!window.confirm("Are you sure you want to delete this product?"))
+      return;
+
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`http://localhost:5001/api/products/${id}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        credentials: "include"
+        credentials: "include",
       });
-      
+
       if (!response.ok) throw new Error("Failed to delete product");
-      
+
       // Emit socket event for real-time update
-      socket.emit("product-update", { 
-        action: "delete", 
-        message: "Product deleted successfully" 
+      socket.emit("product-update", {
+        action: "delete",
+        message: "Product deleted successfully",
       });
-      
+
       showToast("Product deleted successfully", "success");
       fetchProducts();
     } catch (err) {
       showToast(err.message, "error");
     }
   };
-  
+
   // Show toast notification
   const showToast = (message, type) => {
     setToast({ show: true, message, type });
     setTimeout(() => setToast({ show: false, message: "", type: "" }), 3000);
   };
-  
+
   // Handle category filter change
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
     setCurrentPage(1); // Reset to first page on category change
   };
-  
+
   return (
     <div className="admin-panel">
       {/* Top Bar */}
@@ -136,41 +141,44 @@ function AdminPanel() {
             <i className="material-icons">home</i>
             View Store
           </button>
-          <button className="admin-action-btn" onClick={() => navigate("/admin/products/new")}>
+          <button
+            className="admin-action-btn"
+            onClick={() => navigate("/admin/products/new")}
+          >
             <i className="material-icons">add</i>
             Add Product
           </button>
         </div>
       </div>
-      
+
       {/* Navigation Tabs */}
       <div className="admin-tabs">
-        <button 
+        <button
           className={`admin-tab ${activeTab === "products" ? "active" : ""}`}
           onClick={() => setActiveTab("products")}
         >
           Products
         </button>
-        <button 
+        <button
           className={`admin-tab ${activeTab === "orders" ? "active" : ""}`}
           onClick={() => setActiveTab("orders")}
         >
           Orders
         </button>
-        <button 
+        <button
           className={`admin-tab ${activeTab === "users" ? "active" : ""}`}
           onClick={() => setActiveTab("users")}
         >
           Users
         </button>
-        <button 
+        <button
           className={`admin-tab ${activeTab === "analytics" ? "active" : ""}`}
           onClick={() => setActiveTab("analytics")}
         >
           Analytics
         </button>
       </div>
-      
+
       {/* Products Tab Content */}
       {activeTab === "products" && (
         <div className="admin-content">
@@ -180,14 +188,16 @@ function AdminPanel() {
               {categories.map((category) => (
                 <button
                   key={category}
-                  className={`category-btn ${selectedCategory === category ? "active" : ""}`}
+                  className={`category-btn ${
+                    selectedCategory === category ? "active" : ""
+                  }`}
                   onClick={() => handleCategoryChange(category)}
                 >
                   {category}
                 </button>
               ))}
             </div>
-            
+
             <form className="search-form" onSubmit={handleSearch}>
               <input
                 type="text"
@@ -200,7 +210,7 @@ function AdminPanel() {
               </button>
             </form>
           </div>
-          
+
           {/* Products Table */}
           {loading ? (
             <div className="loading-spinner">Loading...</div>
@@ -222,14 +232,16 @@ function AdminPanel() {
                 <tbody>
                   {products.length === 0 ? (
                     <tr>
-                      <td colSpan="6" className="no-data">No products found</td>
+                      <td colSpan="6" className="no-data">
+                        No products found
+                      </td>
                     </tr>
                   ) : (
                     products.map((product) => (
                       <tr key={product._id}>
                         <td>
-                          <img 
-                            src={`http://localhost:5001${product.thumbnail}`} 
+                          <img
+                            src={`http://localhost:5001${product.thumbnail}`}
                             alt={product.title}
                             className="product-thumbnail"
                           />
@@ -244,21 +256,25 @@ function AdminPanel() {
                         </td>
                         <td>
                           <div className="product-actions">
-                            <button 
-                              className="edit-btn" 
-                              onClick={() => navigate(`/admin/products/edit/${product._id}`)}
+                            <button
+                              className="edit-btn"
+                              onClick={() =>
+                                navigate(`/admin/products/edit/${product._id}`)
+                              }
                             >
                               <i className="material-icons">edit</i>
                             </button>
-                            <button 
-                              className="delete-btn" 
+                            <button
+                              className="delete-btn"
                               onClick={() => handleDeleteProduct(product._id)}
                             >
                               <i className="material-icons">delete</i>
                             </button>
-                            <button 
-                              className="view-btn" 
-                              onClick={() => navigate(`/product/${product._id}`)}
+                            <button
+                              className="view-btn"
+                              onClick={() =>
+                                navigate(`/product/${product._id}`)
+                              }
                             >
                               <i className="material-icons">visibility</i>
                             </button>
@@ -269,26 +285,30 @@ function AdminPanel() {
                   )}
                 </tbody>
               </table>
-              
+
               {/* Pagination */}
               {totalPages > 1 && (
                 <div className="pagination">
-                  <button 
+                  <button
                     className="pagination-btn"
                     disabled={currentPage === 1}
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
                   >
                     <i className="material-icons">navigate_before</i>
                   </button>
-                  
+
                   <span className="pagination-info">
                     Page {currentPage} of {totalPages}
                   </span>
-                  
-                  <button 
+
+                  <button
                     className="pagination-btn"
                     disabled={currentPage === totalPages}
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
                   >
                     <i className="material-icons">navigate_next</i>
                   </button>
@@ -298,7 +318,7 @@ function AdminPanel() {
           )}
         </div>
       )}
-      
+
       {/* Other tabs (placeholder) */}
       {activeTab === "orders" && (
         <div className="admin-content">
@@ -306,21 +326,21 @@ function AdminPanel() {
           <p>Orders management features coming soon.</p>
         </div>
       )}
-      
+
       {activeTab === "users" && (
         <div className="admin-content">
           <h2>User Management</h2>
           <p>User management features coming soon.</p>
         </div>
       )}
-      
+
       {activeTab === "analytics" && (
         <div className="admin-content">
           <h2>Analytics</h2>
           <p>Analytics features coming soon.</p>
         </div>
       )}
-      
+
       {/* Toast notification */}
       {toast.show && (
         <div className={`toast-notification ${toast.type}`}>
@@ -331,4 +351,4 @@ function AdminPanel() {
   );
 }
 
-export default AdminPanel; 
+export default AdminPanel;
