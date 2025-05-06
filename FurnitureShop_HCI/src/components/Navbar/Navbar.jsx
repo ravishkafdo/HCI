@@ -1,3 +1,4 @@
+// Navbar.jsx - Updated with Animation Classes
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Navbar.css";
@@ -6,10 +7,18 @@ import { AuthContext } from "../../App";
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const { authState, logout } = useContext(AuthContext);
 
   useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 10;
+      if (isScrolled !== scrolled) {
+        setScrolled(isScrolled);
+      }
+    };
+
     const handleClickOutside = (e) => {
       if (dropdownOpen && !e.target.closest(".profile-section")) {
         setDropdownOpen(false);
@@ -20,9 +29,13 @@ const Navbar = () => {
       }
     };
 
+    document.addEventListener("scroll", handleScroll);
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [dropdownOpen, menuOpen]);
+    return () => {
+      document.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownOpen, menuOpen, scrolled]);
 
   const handleLogout = () => {
     logout();
@@ -34,7 +47,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
       <div className="navbar-container">
         <div className="navbar-logo" onClick={() => navigate("/")}>
           <span className="logo-text">Furniture Hub</span>
@@ -75,40 +88,38 @@ const Navbar = () => {
                 <span className="username">{authState.user?.name}</span>
               </div>
               
-              {dropdownOpen && (
-                <div className="dropdown-menu">
-                  <div className="user-info">
-                    <span className="user-role">{authState.user?.role}</span>
-                    <span className="user-email">{authState.user?.email}</span>
-                  </div>
-                  
-                  <div className="dropdown-links">
-                    <Link to="/profile" className="dropdown-link">
-                      My Profile
-                    </Link>
-                    <Link to="/my-room" className="dropdown-link">
-                      My Room
-                    </Link>
-                    <Link to="/my-inventory" className="dropdown-link">
-                      My Inventory
-                    </Link>
-                    {authState.user?.role === "designer" && (
-                      <Link to="/designs" className="dropdown-link">
-                        My Designs
-                      </Link>
-                    )}
-                    {authState.user?.role === "admin" && (
-                      <Link to="/admin" className="dropdown-link">
-                        Admin Dashboard
-                      </Link>
-                    )}
-                  </div>
-                  
-                  <button className="logout-btn" onClick={handleLogout}>
-                    Logout
-                  </button>
+              <div className={`dropdown-menu ${dropdownOpen ? "open" : ""}`}>
+                <div className="user-info">
+                  <span className="user-role">{authState.user?.role}</span>
+                  <span className="user-email">{authState.user?.email}</span>
                 </div>
-              )}
+                
+                <div className="dropdown-links">
+                  <Link to="/profile" className="dropdown-link">
+                    My Profile
+                  </Link>
+                  <Link to="/my-room" className="dropdown-link">
+                    My Room
+                  </Link>
+                  <Link to="/my-inventory" className="dropdown-link">
+                    My Inventory
+                  </Link>
+                  {authState.user?.role === "designer" && (
+                    <Link to="/designs" className="dropdown-link">
+                      My Designs
+                    </Link>
+                  )}
+                  {authState.user?.role === "admin" && (
+                    <Link to="/admin" className="dropdown-link">
+                      Admin Dashboard
+                    </Link>
+                  )}
+                </div>
+                
+                <button className="logout-btn" onClick={handleLogout}>
+                  Logout
+                </button>
+              </div>
             </div>
           ) : (
             <div className="auth-buttons">
@@ -129,39 +140,37 @@ const Navbar = () => {
         </div>
       </div>
       
-      {menuOpen && (
-        <div className="navbar-menu">
-          <Link to="/" className="menu-link" onClick={() => setMenuOpen(false)}>
-            Home
-          </Link>
-          <Link to="/products" className="menu-link" onClick={() => setMenuOpen(false)}>
-            Shop
-          </Link>
-          <Link to="/design" className="menu-link" onClick={() => setMenuOpen(false)}>
-            Design
-          </Link>
-          <Link to="/my-room" className="menu-link" onClick={() => setMenuOpen(false)}>
-            My Room
-          </Link>
-          <Link to="/my-inventory" className="menu-link" onClick={() => setMenuOpen(false)}>
-            My Inventory
-          </Link>
-          {authState.isAuthenticated && (
-            <>
-              {authState.user?.role === "designer" && (
-                <Link to="/designs" className="menu-link" onClick={() => setMenuOpen(false)}>
-                  My Designs
-                </Link>
-              )}
-              {authState.user?.role === "admin" && (
-                <Link to="/admin" className="menu-link admin-link" onClick={() => setMenuOpen(false)}>
-                  Admin Dashboard
-                </Link>
-              )}
-            </>
-          )}
-        </div>
-      )}
+      <div className={`navbar-menu ${menuOpen ? "open" : ""}`}>
+        <Link to="/" className="menu-link" onClick={() => setMenuOpen(false)}>
+          Home
+        </Link>
+        <Link to="/products" className="menu-link" onClick={() => setMenuOpen(false)}>
+          Shop
+        </Link>
+        <Link to="/design" className="menu-link" onClick={() => setMenuOpen(false)}>
+          Design
+        </Link>
+        <Link to="/my-room" className="menu-link" onClick={() => setMenuOpen(false)}>
+          My Room
+        </Link>
+        <Link to="/my-inventory" className="menu-link" onClick={() => setMenuOpen(false)}>
+          My Inventory
+        </Link>
+        {authState.isAuthenticated && (
+          <>
+            {authState.user?.role === "designer" && (
+              <Link to="/designs" className="menu-link" onClick={() => setMenuOpen(false)}>
+                My Designs
+              </Link>
+            )}
+            {authState.user?.role === "admin" && (
+              <Link to="/admin" className="menu-link admin-link" onClick={() => setMenuOpen(false)}>
+                Admin Dashboard
+              </Link>
+            )}
+          </>
+        )}
+      </div>
     </nav>
   );
 };
