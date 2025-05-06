@@ -22,7 +22,7 @@ const Wall = React.forwardRef(({ colorInstance, geometryArgs, ...props }, ref) =
   );
 });
 
-// Room Component
+
 const Room = ({ wallColors, floorColor, dimensions }) => {
   const frontWallRef = useRef();
   const backWallRef = useRef();
@@ -41,64 +41,102 @@ const Room = ({ wallColors, floorColor, dimensions }) => {
 
   const memoizedFloorColor = useMemo(() => new THREE.Color(floorColor), [floorColor]);
 
-  // Handle wall visibility based on camera angle
+  // Improved wall visibility handling
   useFrame(({ camera }) => {
-    const walls = [
-      { ref: frontWallRef, name: 'front' },
-      { ref: backWallRef, name: 'back' },
-      { ref: leftWallRef, name: 'left' },
-      { ref: rightWallRef, name: 'right' },
-    ];
+    if (!frontWallRef.current || !backWallRef.current || 
+        !leftWallRef.current || !rightWallRef.current) return;
 
-    if (!walls.every(wall => wall.ref.current)) return;
+    // Get camera position relative to room center
+    const cameraPos = camera.position.clone();
+    
+    // Calculate which walls are between camera and room center
+    const hideFront = cameraPos.z > depth/2; // Camera is in front of front wall
+    const hideBack = cameraPos.z < -depth/2; // Camera is behind back wall
+    const hideLeft = cameraPos.x < -width/2; // Camera is left of left wall
+    const hideRight = cameraPos.x > width/2; // Camera is right of right wall
 
-    const direction = new THREE.Vector3();
-    camera.getWorldDirection(direction);
+    // Only hide walls when camera is outside
+    const isOutside = hideFront || hideBack || hideLeft || hideRight || cameraPos.y > height;
 
-    const absX = Math.abs(direction.x);
-    const absZ = Math.abs(direction.z);
+    if (isOutside) {
+      // Hide walls that are between camera and room center
+      frontWallRef.current.material.opacity = hideFront ? 0 : 0.6;
+      backWallRef.current.material.opacity = hideBack ? 0 : 0.6;
+      leftWallRef.current.material.opacity = hideLeft ? 0 : 0.6;
+      rightWallRef.current.material.opacity = hideRight ? 0 : 0.6;
 
-    walls.forEach(wall => {
-      if (wall.ref.current) wall.ref.current.material.opacity = 0.6;
-    });
+      // Special case: when looking diagonally from a corner, ensure we don't hide too many walls
+      const diagonalView = 
+        (hideFront && hideLeft) || 
+        (hideFront && hideRight) || 
+        (hideBack && hideLeft) || 
+        (hideBack && hideRight);
 
-    if (absX > absZ) {
-      if (direction.x < 0) {
-        if (leftWallRef.current) leftWallRef.current.material.opacity = 0;
-      } else {
-        if (rightWallRef.current) rightWallRef.current.material.opacity = 0;
+      if (diagonalView) {
+        // When looking from a corner, keep one side wall visible
+        if (hideFront && hideLeft) {
+          rightWallRef.current.material.opacity = 0.6;
+        } else if (hideFront && hideRight) {
+          leftWallRef.current.material.opacity = 0.6;
+        } else if (hideBack && hideLeft) {
+          rightWallRef.current.material.opacity = 0.6;
+        } else if (hideBack && hideRight) {
+          leftWallRef.current.material.opacity = 0.6;
+        }
       }
     } else {
-      if (direction.z < 0) {
-        if (backWallRef.current) backWallRef.current.material.opacity = 0;
-      } else {
-        if (frontWallRef.current) frontWallRef.current.material.opacity = 0;
-      }
+      // Inside the room - show all walls
+      frontWallRef.current.material.opacity = 0.6;
+      backWallRef.current.material.opacity = 0.6;
+      leftWallRef.current.material.opacity = 0.6;
+      rightWallRef.current.material.opacity = 0.6;
     }
   });
 
   return (
     <group>
-      {/* Floor */}
+      {/* Floor and ceiling */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
         <planeGeometry args={[width, depth]} />
         <meshStandardMaterial color={memoizedFloorColor} side={THREE.DoubleSide} />
       </mesh>
 
-      {/* Ceiling */}
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, height, 0]}>
         <planeGeometry args={[width, depth]} />
         <meshStandardMaterial color="#f5f5f5" side={THREE.DoubleSide} />
       </mesh>
 
-      {/* Walls */}
-      <Wall ref={backWallRef} position={[0, height / 2, -depth / 2]} geometryArgs={[width, height]} colorInstance={memoizedWallColors.back} />
-      <Wall ref={frontWallRef} position={[0, height / 2, depth / 2]} geometryArgs={[width, height]} colorInstance={memoizedWallColors.front} />
-      <Wall ref={leftWallRef} position={[-width / 2, height / 2, 0]} rotation={[0, Math.PI / 2, 0]} geometryArgs={[depth, height]} colorInstance={memoizedWallColors.left} />
-      <Wall ref={rightWallRef} position={[width / 2, height / 2, 0]} rotation={[0, -Math.PI / 2, 0]} geometryArgs={[depth, height]} colorInstance={memoizedWallColors.right} />
+      {/* All four walls */}
+      <Wall 
+        ref={backWallRef} 
+        position={[0, height / 2, -depth / 2]} 
+        geometryArgs={[width, height]} 
+        colorInstance={memoizedWallColors.back} 
+      />
+      <Wall 
+        ref={frontWallRef} 
+        position={[0, height / 2, depth / 2]} 
+        geometryArgs={[width, height]} 
+        colorInstance={memoizedWallColors.front} 
+      />
+      <Wall 
+        ref={leftWallRef} 
+        position={[-width / 2, height / 2, 0]} 
+        rotation={[0, Math.PI / 2, 0]} 
+        geometryArgs={[depth, height]} 
+        colorInstance={memoizedWallColors.left} 
+      />
+      <Wall 
+        ref={rightWallRef} 
+        position={[width / 2, height / 2, 0]} 
+        rotation={[0, -Math.PI / 2, 0]} 
+        geometryArgs={[depth, height]} 
+        colorInstance={memoizedWallColors.right} 
+      />
     </group>
   );
 };
+
 
 // Model component for furniture
 const Model = ({ url, position, rotation, onClick, scale = 1 }) => {
@@ -164,6 +202,7 @@ const TwoDView = ({ dimensions, roomItems }) => {
 };
 
 export default function Design() {
+
   const { authState } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
@@ -274,7 +313,7 @@ export default function Design() {
           placeholder="Room Design Name"
         />
         <div className="header-actions">
-          <button className="action-button save-button" onClick={handleSaveDesign}>
+          <button className="save-button-design" onClick={handleSaveDesign}>
             Save Design
           </button>
         </div>
