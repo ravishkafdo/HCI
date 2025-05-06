@@ -165,7 +165,7 @@ const ProductDetail = () => {
           )}
         </div>
         
-        <div className="product-info">
+        <div className="product-info-details">
           <div className="product-header">
             <h1 className="product-title">{product.title}</h1>
             <div className="product-category">
