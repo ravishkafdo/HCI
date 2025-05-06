@@ -6,7 +6,8 @@
   overflow: hidden;
   background-color: #f0f0f0;
   color: #333;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 /* Header */
@@ -172,23 +173,23 @@
 }
 
 .room-icon {
-  background-image: url('/icons/room.svg');
+  background-image: url("/icons/room.svg");
 }
 
 .furniture-icon {
-  background-image: url('/icons/furniture.svg');
+  background-image: url("/icons/furniture.svg");
 }
 
 .colors-icon {
-  background-image: url('/icons/color.svg');
+  background-image: url("/icons/color.svg");
 }
 
 .lighting-icon {
-  background-image: url('/icons/light.svg');
+  background-image: url("/icons/light.svg");
 }
 
 .measure-icon {
-  background-image: url('/icons/measure.svg');
+  background-image: url("/icons/measure.svg");
 }
 
 .tool-button span {
@@ -254,7 +255,8 @@
 }
 
 /* Side Panels */
-.catalog-panel, .colors-panel {
+.catalog-panel,
+.colors-panel {
   width: 320px;
   height: 100%;
   background-color: white;
@@ -417,7 +419,8 @@
 
 /* Responsive design */
 @media (max-width: 1024px) {
-  .catalog-panel, .colors-panel {
+  .catalog-panel,
+  .colors-panel {
     width: 280px;
   }
 }
@@ -426,13 +429,14 @@
   .design-toolbar {
     width: 60px;
   }
-  
+
   .tool-button {
     width: 48px;
     height: 48px;
   }
-  
-  .catalog-panel, .colors-panel {
+
+  .catalog-panel,
+  .colors-panel {
     position: absolute;
     right: 0;
     top: 0;
@@ -445,8 +449,91 @@
   .tabs {
     display: none;
   }
-  
-  .catalog-panel, .colors-panel {
+
+  .catalog-panel,
+  .colors-panel {
     width: 100%;
   }
+}
+/* Add to existing Design.css */
+.remove-button {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #ffebee;
+  color: #ff5252;
+  border: none;
+  border-radius: 0 0 8px 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.remove-button:hover {
+  background-color: #ffcdd2;
+}
+
+/* Update catalog panel styles */
+.catalog-panel {
+  width: 300px;
+  background-color: white;
+  border-left: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+}
+
+.catalog-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.catalog-item {
+  display: flex;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.catalog-thumbnail {
+  width: 80px;
+  height: 80px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-right: 1rem;
+}
+
+.catalog-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.catalog-details {
+  flex: 1;
+}
+
+.catalog-details h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+
+.catalog-price {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.add-button {
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #4a90e2;
+  color: white;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
+}
+
+.add-button:hover {
+  background-color: #3a80d2;
 }
