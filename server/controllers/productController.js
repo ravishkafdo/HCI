@@ -79,6 +79,10 @@ exports.getProduct = async (req, res) => {
 // Create a new product
 exports.createProduct = async (req, res) => {
   try {
+    // Debug logs
+    console.log("Creating product - request body:", JSON.stringify(req.body, null, 2));
+    console.log("User in request:", req.user);
+    
     // Validate required fields
     const {
       title,
@@ -90,20 +94,35 @@ exports.createProduct = async (req, res) => {
       dimensions
     } = req.body;
     
+    console.log("Dimensions:", dimensions);
+    
     if (!title || !description || !price || !category || !thumbnail || !modelUrl || !dimensions) {
+      console.log("Missing required fields:", {
+        title: !!title,
+        description: !!description,
+        price: !!price,
+        category: !!category,
+        thumbnail: !!thumbnail,
+        modelUrl: !!modelUrl,
+        dimensions: !!dimensions
+      });
+      
       return res.status(400).json({
         success: false,
         message: 'Please provide all required fields'
       });
     }
     
+    console.log("Creating product with validated data");
     const product = await Product.create(req.body);
+    console.log("Product created successfully:", product._id);
     
     res.status(201).json({
       success: true,
       product
     });
   } catch (error) {
+    console.error("Error creating product:", error);
     res.status(500).json({
       success: false,
       message: 'Failed to create product',
