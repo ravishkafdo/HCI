@@ -6,10 +6,10 @@ const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filter, setFilter] = useState("All");
+  const [categoryFilter, setCategoryFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
-  // Categories for filter
   const categories = [
     "All",
     "Living Room",
@@ -19,16 +19,13 @@ const ProductList = () => {
     "Storage"
   ];
 
-  // Fetch products from API
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         
-        // Build query parameters
         const params = new URLSearchParams();
-        if (filter !== "All") params.append("category", filter);
-        if (searchTerm) params.append("search", searchTerm);
+        if (categoryFilter !== "All") params.append("category", categoryFilter);
         
         const response = await fetch(`http://localhost:5001/api/products?${params.toString()}`);
         
@@ -37,7 +34,16 @@ const ProductList = () => {
         }
         
         const data = await response.json();
-        setProducts(data.products || []);
+        let filteredProducts = data.products || [];
+        
+        // Filter by product title (name) on client side if search term exists
+        if (searchTerm.trim()) {
+          filteredProducts = filteredProducts.filter(product =>
+            product.title.toLowerCase().includes(searchTerm.trim().toLowerCase())
+          );
+        }
+        
+        setProducts(filteredProducts);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching products:", err);
@@ -45,19 +51,21 @@ const ProductList = () => {
         setLoading(false);
       }
     };
-    
-    fetchProducts();
-  }, [filter, searchTerm]);
 
-  // Handle search
-  const handleSearch = (e) => {
-    e.preventDefault();
-    // Search is triggered by the state change
+    const debounceTimer = setTimeout(() => {
+      fetchProducts();
+    }, 300);
+
+    return () => clearTimeout(debounceTimer);
+  }, [categoryFilter, searchTerm]);
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
   };
 
-  // Handle filter change
-  const handleFilterChange = (category) => {
-    setFilter(category);
+  const handleCategorySelect = (category) => {
+    setCategoryFilter(category);
+    setIsCategoryDropdownOpen(false);
   };
 
   return (
@@ -68,29 +76,46 @@ const ProductList = () => {
       </div>
       
       <div className="products-toolbar">
-        <div className="category-filters">
-          {categories.map((category) => (
-            <button
-              key={category}
-              className={`category-filter ${filter === category ? "active" : ""}`}
-              onClick={() => handleFilterChange(category)}
-            >
-              {category}
-            </button>
-          ))}
+        <div className="search-form-list">
+          <div className="search-container-list">
+            <input
+              type="text"
+              placeholder="Search furniture..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="search-input-list"
+            />
+          </div>
         </div>
-        
-        <form className="search-form" onSubmit={handleSearch}>
-          <input
-            type="text"
-            placeholder="Search furniture..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <button type="submit">
-            <i className="material-icons">search</i>
-          </button>
-        </form>
+
+        <div className="filters-container">
+          <div className="category-filter-container">
+            <span className="filter-label">Categories:</span>
+            <button 
+              className="category-filter-toggle"
+              onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+            >
+              {categoryFilter === "All" ? "All Categories" : categoryFilter}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 9L12 15L18 9" stroke="#2d3436" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            
+            {isCategoryDropdownOpen && (
+              <div className="category-dropdown">
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    className={`category-option ${categoryFilter === category ? "active" : ""}`}
+                    onClick={() => handleCategorySelect(category)}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
       
       {loading ? (
@@ -101,11 +126,11 @@ const ProductList = () => {
       ) : error ? (
         <div className="error-message">
           <p>{error}</p>
-          <button onClick={() => window.location.reload()}>Try Again</button>
+          <button className="retry-btn" onClick={() => window.location.reload()}>Try Again</button>
         </div>
       ) : products.length === 0 ? (
         <div className="no-products">
-          <p>No products found. Try a different search or category.</p>
+          <p>No products found. Try a different search or filter.</p>
         </div>
       ) : (
         <div className="products-grid">
@@ -126,7 +151,7 @@ const ProductList = () => {
                 <div className="product-price">${product.price.toFixed(2)}</div>
                 <div className="product-category">{product.category}</div>
               </div>
-              <div className="product-actions">
+              <div className="product-actions-list">
                 <button className="view-details">View Details</button>
               </div>
             </Link>
@@ -137,4 +162,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList; 
+export default ProductList;

@@ -4,7 +4,6 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import "./ProductDetail.css";
 
-// 3D Model component with loading state
 const Model = ({ url, onLoaded }) => {
   const { scene } = useGLTF(url);
   
@@ -27,7 +26,6 @@ const ProductDetail = () => {
   const [viewMode, setViewMode] = useState('2D');
   const [modelLoaded, setModelLoaded] = useState(false);
 
-  // Fetch product data
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -92,7 +90,7 @@ const ProductDetail = () => {
       <div className="error-container">
         <h2>Error Loading Product</h2>
         <p>{error || "Product not found"}</p>
-        <button onClick={() => navigate('/products')}>
+        <button className="retry-btn" onClick={() => navigate('/products')}>
           Return to Products
         </button>
       </div>
@@ -168,14 +166,14 @@ const ProductDetail = () => {
         </div>
         
         <div className="product-info">
-          <h1 className="product-title">{product.title}</h1>
-          
-          <div className="product-category">
-            <span>{product.category}</span>
-          </div>
-          
-          <div className="product-price">
-            ${product.price.toFixed(2)}
+          <div className="product-header">
+            <h1 className="product-title">{product.title}</h1>
+            <div className="product-category">
+              <span>{product.category}</span>
+            </div>
+            <div className="product-price">
+              ${product.price.toFixed(2)}
+            </div>
           </div>
           
           <div className="product-description">
