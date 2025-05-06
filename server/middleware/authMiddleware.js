@@ -85,6 +85,7 @@ exports.protect = async (req, res, next) => {
   }
 };
 
+
 // Middleware to restrict routes to admins only
 exports.adminOnly = (req, res, next) => {
   if (req.user && req.user.role === 'admin') {

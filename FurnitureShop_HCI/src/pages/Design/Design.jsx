@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import "./Design.css";
+import { AuthContext } from "../../App";
 
 const Model = ({ url, position, rotation, onClick }) => {
   const { scene } = useGLTF(url);
@@ -18,6 +19,7 @@ const Model = ({ url, position, rotation, onClick }) => {
 };
 
 export default function Design() {
+  const { authState } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
   const [designName, setDesignName] = useState("My Room Design");
@@ -27,11 +29,9 @@ export default function Design() {
   const [showColorPalette, setShowColorPalette] = useState(false);
   const [is3DView, setIs3DView] = useState(true);
 
-  // Load initial items from location state or localStorage
   useEffect(() => {
     const savedItems = JSON.parse(localStorage.getItem("roomItems") || "[]");
 
-    // If coming from product page with a selected product
     if (location.state?.selectedProduct) {
       const product = location.state.selectedProduct;
       const exists = savedItems.some((item) => item._id === product._id);
@@ -57,30 +57,7 @@ export default function Design() {
     }
   }, [location.state]);
 
-  const handleAddFurniture = (item) => {
-    const newItem = {
-      ...item,
-      position: [0, 0, 0],
-      rotation: [0, 0, 0],
-    };
 
-    const newItems = [...roomItems, newItem];
-    setRoomItems(newItems);
-    localStorage.setItem("roomItems", JSON.stringify(newItems));
-    setShowFurnitureCatalog(false);
-  };
-
-  const handlePositionChange = (index, position) => {
-    const newItems = [...roomItems];
-    newItems[index].position = position;
-    setRoomItems(newItems);
-  };
-
-  const handleRotationChange = (index, rotation) => {
-    const newItems = [...roomItems];
-    newItems[index].rotation = rotation;
-    setRoomItems(newItems);
-  };
 
   const handleSelectItem = (index) => {
     setSelectedItem(selectedItem === index ? null : index);
@@ -94,6 +71,10 @@ export default function Design() {
   };
 
   const handleSaveDesign = () => {
+    if (!authState.isAuthenticated) {
+      navigate('/login', { state: { from: location, message: 'Please login to save your design' } });
+      return;
+    }
     localStorage.setItem("roomItems", JSON.stringify(roomItems));
     navigate("/my-room");
   };
@@ -158,14 +139,13 @@ export default function Design() {
                 <gridHelper args={[10, 10]} />
 
                 {roomItems.map((item, index) => (
-                  <Suspense key={index} fallback={null}>
-                    <Model
-                      url={`http://localhost:5001${item.modelUrl}`}
-                      position={item.position}
-                      rotation={item.rotation}
-                      onClick={() => handleSelectItem(index)}
-                    />
-                  </Suspense>
+                  <Model
+                    key={index}
+                    url={`http://localhost:5001${item.modelUrl}`}
+                    position={item.position}
+                    rotation={item.rotation}
+                    onClick={() => handleSelectItem(index)}
+                  />
                 ))}
 
                 <OrbitControls />
@@ -178,7 +158,6 @@ export default function Design() {
           </div>
         </div>
 
-        {/* Furniture Catalog Panel */}
         {showFurnitureCatalog && (
           <div className="catalog-panel">
             <div className="panel-header">
@@ -214,7 +193,6 @@ export default function Design() {
           </div>
         )}
 
-        {/* Selected Item Controls */}
         {selectedItem !== null && roomItems[selectedItem] && (
           <div className="colors-panel">
             <div className="panel-header">

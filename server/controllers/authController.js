@@ -137,14 +137,6 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validate input
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Please provide both email and password",
-      });
-    }
-
     // Hardcoded admin credentials
     const ADMIN_EMAIL = 'admin@example.com';
     const ADMIN_PASSWORD = 'adminpass';
@@ -162,7 +154,7 @@ exports.login = async (req, res) => {
       // Create token
       const token = jwt.sign(
         { id: adminUser._id },
-        process.env.JWT_SECRET || config.JWT_SECRET,
+        process.env.JWT_SECRET,
         { expiresIn: "24h" }
       );
 
@@ -175,7 +167,6 @@ exports.login = async (req, res) => {
     }
 
     // Regular database authentication if not hardcoded admin
-    // Find user
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
       return res.status(401).json({
@@ -196,7 +187,7 @@ exports.login = async (req, res) => {
     // Create token
     const token = jwt.sign(
       { id: user._id },
-      process.env.JWT_SECRET || config.JWT_SECRET,
+      process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
 

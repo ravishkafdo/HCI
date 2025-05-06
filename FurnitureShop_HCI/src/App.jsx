@@ -19,10 +19,8 @@ import MyRoom from "./pages/Room/MyRoom";
 import MyInventory from "./pages/Room/MyInventory";
 import { useState, useEffect, createContext } from "react";
 
-// Create Auth Context
 export const AuthContext = createContext();
 
-// Protected Route Component
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const location = useLocation();
   const { authState } = useAuth();
@@ -31,14 +29,13 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (adminOnly && !authState.user?.isAdmin) {
+  if (adminOnly && authState.user?.role !== "admin") {
     return <Navigate to="/" replace />;
   }
 
   return children;
 };
 
-// Custom hook for auth
 const useAuth = () => {
   const [authState, setAuthState] = useState({
     isAuthenticated: false,
@@ -52,7 +49,6 @@ const useAuth = () => {
       const user = JSON.parse(localStorage.getItem("user") || "null");
 
       if (token && user) {
-        // You could add token validation here
         setAuthState({
           isAuthenticated: true,
           user,
@@ -112,24 +108,10 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/products" element={<ProductList />} />
             <Route path="/products/:id" element={<ProductDetail />} />
+            <Route path="/design" element={<Design />} />
+            <Route path="/design/:id" element={<Design />} />
 
             {/* Protected Routes */}
-            <Route
-              path="/design"
-              element={
-                <ProtectedRoute>
-                  <Design />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/design/:id"
-              element={
-                <ProtectedRoute>
-                  <Design />
-                </ProtectedRoute>
-              }
-            />
             <Route
               path="/my-room"
               element={
