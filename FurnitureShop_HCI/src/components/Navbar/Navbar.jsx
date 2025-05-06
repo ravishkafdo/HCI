@@ -44,9 +44,10 @@ const Navbar = () => {
           <Link to="/" className="nav-link">Home</Link>
           <Link to="/products" className="nav-link">Shop</Link>
           <Link to="/design" className="nav-link">Design</Link>
+          <Link to="/my-room" className="nav-link">My Room</Link>
+          <Link to="/my-inventory" className="nav-link">My Inventory</Link>
           {authState.isAuthenticated && (
             <>
-              <Link to="/my-room" className="nav-link">My Room</Link>
               {authState.user?.role === "designer" && (
                 <Link to="/designs" className="nav-link">My Designs</Link>
               )}
@@ -139,14 +140,14 @@ const Navbar = () => {
           <Link to="/design" className="menu-link" onClick={() => setMenuOpen(false)}>
             Design
           </Link>
+          <Link to="/my-room" className="menu-link" onClick={() => setMenuOpen(false)}>
+            My Room
+          </Link>
+          <Link to="/my-inventory" className="menu-link" onClick={() => setMenuOpen(false)}>
+            My Inventory
+          </Link>
           {authState.isAuthenticated && (
             <>
-              <Link to="/my-room" className="menu-link" onClick={() => setMenuOpen(false)}>
-                My Room
-              </Link>
-              <Link to="/my-inventory" className="menu-link" onClick={() => setMenuOpen(false)}>
-                My Inventory
-              </Link>
               {authState.user?.role === "designer" && (
                 <Link to="/designs" className="menu-link" onClick={() => setMenuOpen(false)}>
                   My Designs

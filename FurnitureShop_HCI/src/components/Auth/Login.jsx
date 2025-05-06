@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./Auth.css";
+import { AuthContext } from "../../App";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,11 @@ const Login = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const fromDesign = location.state?.from?.pathname === "/design";
+  const fromAdmin = location.state?.from?.pathname?.startsWith("/admin");
+  const message = location.state?.message;
+  const { login } = useContext(AuthContext);
 
   const handleChange = (e) => {
     setFormData({
@@ -19,13 +25,73 @@ const Login = () => {
     });
   };
 
+  // Mock user data for demo purposes
+  const mockUsers = {
+    "admin@example.com": {
+      name: "Admin User",
+      email: "admin@example.com",
+      role: "admin",
+      password: "adminpass"
+    },
+    "designer@example.com": {
+      name: "Designer User",
+      email: "designer@example.com",
+      role: "designer",
+      password: "password"
+    }
+  };
+
+  const handleMockLogin = () => {
+    const { email, password } = formData;
+    const user = mockUsers[email];
+
+    if (user && user.password === password) {
+      // Create a mock token
+      const token = `mock-token-${Date.now()}`;
+      
+      // Call the login function from context
+      login(token, user);
+      
+      console.log("Mock authentication successful");
+      
+      // Redirect based on priority
+      setTimeout(() => {
+        if (fromAdmin && user.role === 'admin') {
+          console.log("Redirecting to admin dashboard");
+          navigate(location.state.from.pathname);
+        } else if (fromDesign) {
+          console.log("Redirecting to design page");
+          navigate(location.state.from.pathname);
+        } else if (user.role === 'admin') {
+          console.log("Redirecting to admin dashboard");
+          navigate("/admin");
+        } else {
+          console.log("Redirecting to home page");
+          navigate("/");
+        }
+      }, 100); // Short delay to ensure context updates
+      
+      return true;
+    }
+    
+    return false;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
     try {
-      // Real authentication with backend
+      console.log("Attempting login with:", formData.email);
+      
+      // Try mock login first for demo purposes
+      if (handleMockLogin()) {
+        setIsLoading(false);
+        return;
+      }
+      
+      // If mock login fails, try the real backend
       const response = await fetch("http://localhost:5001/api/auth/login", {
         method: "POST",
         headers: {
@@ -38,7 +104,9 @@ const Login = () => {
         credentials: "include",
       });
 
+      console.log("Response status:", response.status);
       const data = await response.json();
+      console.log("Response data:", data);
 
       if (!response.ok) {
         throw new Error(data.message || "Login failed");
@@ -48,14 +116,29 @@ const Login = () => {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       
-      // Redirect based on role
-      if (data.user.role === 'admin') {
-        navigate("/admin");
-      } else if (data.user.role === 'designer') {
-        navigate("/");
-      } else {
-        navigate("/");
-      }
+      // Call the login function from context
+      login(data.token, data.user);
+      
+      console.log("Authentication successful, redirecting...");
+      console.log("fromDesign:", fromDesign);
+      console.log("User role:", data.user.role);
+      
+      // Redirect based on priority: design redirect first, then role-based
+      setTimeout(() => {
+        if (fromAdmin && data.user.role === 'admin') {
+          console.log("Redirecting to admin dashboard");
+          navigate(location.state.from.pathname);
+        } else if (fromDesign) {
+          console.log("Redirecting to design page");
+          navigate(location.state.from.pathname);
+        } else if (data.user.role === 'admin') {
+          console.log("Redirecting to admin dashboard");
+          navigate("/admin");
+        } else {
+          console.log("Redirecting to home page");
+          navigate("/");
+        }
+      }, 100); // Short delay to ensure context updates
     } catch (error) {
       console.error("Login Error:", error);
       setError(error.message || "Login failed. Please try again.");
@@ -72,6 +155,7 @@ const Login = () => {
           Access your account to manage furniture designs
         </p>
         
+        {message && <div className="info-message">{message}</div>}
         {error && <div className="error-message">{error}</div>}
 
         <div className="form-group">

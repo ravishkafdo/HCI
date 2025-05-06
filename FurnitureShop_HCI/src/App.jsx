@@ -24,6 +24,11 @@ export const AuthContext = createContext();
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const location = useLocation();
   const { authState } = useAuth();
+  
+  // Don't render until authentication check is complete
+  if (authState.isLoading) {
+    return <div>Loading...</div>;
+  }
 
   if (!authState.isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
@@ -110,26 +115,10 @@ function App() {
             <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/design" element={<Design />} />
             <Route path="/design/:id" element={<Design />} />
+            <Route path="/my-room" element={<MyRoom />} />
+            <Route path="/my-inventory" element={<MyInventory />} />
 
-            {/* Protected Routes */}
-            <Route
-              path="/my-room"
-              element={
-                <ProtectedRoute>
-                  <MyRoom />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/my-inventory"
-              element={
-                <ProtectedRoute>
-                  <MyInventory />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Admin Routes */}
+            {/* Admin Routes - Still Protected */}
             <Route
               path="/admin"
               element={

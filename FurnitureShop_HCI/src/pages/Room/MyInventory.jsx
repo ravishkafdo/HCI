@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "./MyInventory.css";
+import { AuthContext } from "../../App";
 
 const MyInventory = () => {
   const [roomItems, setRoomItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { authState } = useContext(AuthContext);
+  const isAdmin = authState.isAuthenticated && authState.user?.role === "admin";
   
   // Load room items from localStorage
   useEffect(() => {
@@ -34,6 +37,15 @@ const MyInventory = () => {
       localStorage.removeItem('roomItems');
     }
   };
+
+  // Handle add furniture action based on user role
+  const handleAddFurniture = () => {
+    if (isAdmin) {
+      navigate('/admin/products/new');
+    } else {
+      navigate('/products');
+    }
+  };
   
   return (
     <div className="inventory-page">
@@ -46,12 +58,14 @@ const MyInventory = () => {
           >
             View 3D Room
           </button>
-          <button
-            className="shop-btn"
-            onClick={() => navigate('/products')}
-          >
-            Add More Furniture
-          </button>
+          {isAdmin && (
+            <button
+              className="shop-btn"
+              onClick={handleAddFurniture}
+            >
+              Add New Furniture
+            </button>
+          )}
           {roomItems.length > 0 && (
             <button
               className="clear-btn"
@@ -70,10 +84,12 @@ const MyInventory = () => {
         </div>
       ) : roomItems.length === 0 ? (
         <div className="empty-inventory">
-          <p>Your inventory is empty. Add furniture from the products page.</p>
-          <button onClick={() => navigate('/products')}>
-            Browse Furniture
-          </button>
+          <p>Your inventory is empty.</p>
+          {isAdmin && (
+            <button onClick={handleAddFurniture}>
+              Add New Furniture
+            </button>
+          )}
         </div>
       ) : (
         <div className="inventory-grid">
@@ -116,6 +132,23 @@ const MyInventory = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {isAdmin && (
+        <div className="admin-actions">
+          <button 
+            className="admin-btn"
+            onClick={() => navigate('/admin/products/new')}
+          >
+            Add New Product
+          </button>
+          <button 
+            className="admin-btn"
+            onClick={() => navigate('/admin')}
+          >
+            Manage Products
+          </button>
         </div>
       )}
     </div>
