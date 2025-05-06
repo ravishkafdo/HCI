@@ -145,6 +145,36 @@ exports.login = async (req, res) => {
       });
     }
 
+    // Hardcoded admin credentials
+    const ADMIN_EMAIL = 'admin@example.com';
+    const ADMIN_PASSWORD = 'adminpass';
+
+    // Check if credentials match hardcoded admin
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+      // Create admin user object
+      const adminUser = {
+        _id: '645f1c5b3c8c1234567890ab', // Fixed ID for admin
+        name: 'Admin User',
+        email: ADMIN_EMAIL,
+        role: 'admin'
+      };
+
+      // Create token
+      const token = jwt.sign(
+        { id: adminUser._id },
+        process.env.JWT_SECRET || config.JWT_SECRET,
+        { expiresIn: "24h" }
+      );
+
+      // Return admin data
+      return res.json({
+        success: true,
+        token,
+        user: adminUser,
+      });
+    }
+
+    // Regular database authentication if not hardcoded admin
     // Find user
     const user = await User.findOne({ email }).select("+password");
     if (!user) {

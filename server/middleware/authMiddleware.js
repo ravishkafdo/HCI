@@ -45,7 +45,19 @@ exports.protect = async (req, res, next) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       
-      // Get user from database
+      // Check if this is the hardcoded admin account
+      if (decoded.id === '645f1c5b3c8c1234567890ab') {
+        // Set admin user manually
+        req.user = {
+          _id: '645f1c5b3c8c1234567890ab',
+          name: 'Admin User',
+          email: 'admin@example.com',
+          role: 'admin'
+        };
+        return next();
+      }
+      
+      // Get user from database for regular users
       const user = await User.findById(decoded.id).select('-password');
       
       if (!user) {
