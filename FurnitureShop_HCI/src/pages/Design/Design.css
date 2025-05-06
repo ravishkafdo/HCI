@@ -1,25 +1,27 @@
+/* Design.css - Complete Updated Version */
+
+/* Base Styles */
 .design-page {
   display: flex;
   flex-direction: column;
   height: 100vh;
   max-height: 100vh;
   overflow: hidden;
-  background-color: #f0f0f0;
-  color: #333;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  background-color: #f8f9fa;
+  color: #2d3436;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* Header */
+/* Header Styles */
 .design-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 2rem;
   background-color: #ffffff;
   border-bottom: 1px solid #e0e0e0;
-  height: 60px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 70px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .header-left {
@@ -28,99 +30,49 @@
 }
 
 .design-name-input {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  border: 1px solid transparent;
-  padding: 0.5rem;
-  border-radius: 4px;
-  background-color: transparent;
-  width: 200px;
+  border: 2px solid transparent;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  width: 250px;
+  transition: all 0.3s ease;
 }
 
 .design-name-input:focus {
-  border-color: #4a90e2;
-  background-color: #f9f9f9;
+  border-color: #6c5ce7;
+  background-color: #ffffff;
   outline: none;
-}
-
-.saved-indicator {
-  color: #2ecc71;
-  margin-left: 0.75rem;
-  font-weight: 500;
-  transition: opacity 0.3s;
-}
-
-.tabs {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.tab {
-  padding: 0.5rem 1rem;
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  color: #666;
-  transition: all 0.2s;
-}
-
-.tab:hover {
-  background-color: #f0f0f0;
-}
-
-.tab.active {
-  background-color: #4a90e2;
-  color: white;
-  font-weight: 500;
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-}
-
-.icon-button {
-  width: 36px;
-  height: 36px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: #666;
-  transition: background-color 0.2s;
-}
-
-.icon-button:hover {
-  background-color: #f0f0f0;
-  color: #333;
+  gap: 1rem;
 }
 
 .action-button {
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.2s;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
 .save-button {
-  background-color: #4caf50;
+  background-color: #6c5ce7;
   color: white;
 }
 
 .save-button:hover {
-  background-color: #43a047;
+  background-color: #5649c0;
 }
 
-/* Main content area */
+/* Main Content Area */
 .design-content {
   display: flex;
   flex: 1;
@@ -128,15 +80,16 @@
   overflow: hidden;
 }
 
-/* Toolbar */
+/* Toolbar Styles */
 .design-toolbar {
   display: flex;
   flex-direction: column;
-  width: 80px;
+  width: 90px;
   background-color: #ffffff;
   border-right: 1px solid #e0e0e0;
-  padding: 1rem 0;
+  padding: 1.5rem 0;
   align-items: center;
+  gap: 1rem;
 }
 
 .tool-button {
@@ -144,60 +97,52 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
-  margin-bottom: 0.75rem;
-  border-radius: 8px;
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
   border: none;
   background-color: transparent;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
 }
 
 .tool-button:hover {
-  background-color: #f0f0f0;
+  background-color: #f1f3f9;
 }
 
 .tool-button.active {
-  background-color: #e3f2fd;
-  color: #2196f3;
+  background-color: #e6e4ff;
+  color: #6c5ce7;
 }
 
 .tool-icon {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 4px;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 6px;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
 }
 
-.room-icon {
-  background-image: url("/icons/room.svg");
-}
-
 .furniture-icon {
-  background-image: url("/icons/furniture.svg");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232d3436'%3E%3Cpath d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 16H6c-.55 0-1-.45-1-1v-3h3v1.5c0 .28.22.5.5.5h3c.28 0 .5-.22.5-.5V15h3v3c0 .55-.45 1-1 1zm-7-8.5h1V10h-1v.5zm0-2h1V8h-1v.5zM8 10h1v.5c0 .28.22.5.5.5h3c.28 0 .5-.22.5-.5V10h1v4H8v-4z'/%3E%3C/svg%3E");
 }
 
-.colors-icon {
-  background-image: url("/icons/color.svg");
+.walls-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232d3436'%3E%3Cpath d='M3 3v18h18V3H3zm16 16H5V5h14v14z'/%3E%3Cpath d='M7 7h4v4H7zM13 7h4v4h-4zM7 13h4v4H7zM13 13h4v4h-4z'/%3E%3C/svg%3E");
 }
 
 .lighting-icon {
-  background-image: url("/icons/light.svg");
-}
-
-.measure-icon {
-  background-image: url("/icons/measure.svg");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232d3436'%3E%3Cpath d='M13 3v1h-2V3h2zm3.293 4.707l.707.707-1.414 1.414-.707-.707 1.414-1.414zM19 11h1v2h-1v-2zm-8 8h2v1h-2v-1zm-7.707-3.293l.707-.707 1.414 1.414-.707.707-1.414-1.414zM3 12v-2h1v2H3zm5-8.293l-.707.707 1.414 1.414.707-.707L8 3.707z'/%3E%3C/svg%3E");
 }
 
 .tool-button span {
   font-size: 0.8rem;
   color: #666;
+  font-weight: 500;
 }
 
-/* Canvas and 3D area */
+/* Canvas Area */
 .design-canvas-container {
   flex: 1;
   position: relative;
@@ -207,57 +152,75 @@
 }
 
 .view-toggle-wrapper {
-  padding: 1rem;
-  display: flex;
-  justify-content: center;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
 }
 
 .view-toggle {
   display: flex;
-  background-color: #e0e0e0;
-  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
   padding: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .view-button {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.25rem;
   border: none;
-  border-radius: 16px;
+  border-radius: 8px;
   background: transparent;
   cursor: pointer;
   font-size: 0.9rem;
-  transition: all 0.2s;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .view-button.active {
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #6c5ce7;
+  color: white;
 }
 
 .design-canvas {
   flex: 1;
   width: 100%;
-  background-color: #f9f9f9;
+  background-color: #e9ecef;
   position: relative;
   overflow: hidden;
 }
 
 .canvas-controls {
   position: absolute;
-  bottom: 1rem;
-  right: 1rem;
+  bottom: 1.5rem;
+  right: 1.5rem;
   display: flex;
-  gap: 0.5rem;
+  gap: 0.75rem;
   background-color: white;
-  padding: 0.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Side Panels */
+/* 2D View Styles */
+.two-d-view {
+  width: 100%;
+  height: 100%;
+  background-color: #f8f9fa;
+  position: relative;
+  overflow: hidden;
+}
+
+.two-d-view svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Panel Styles */
 .catalog-panel,
-.colors-panel {
-  width: 320px;
+.colors-panel,
+.wall-colors-panel {
+  width: 340px;
   height: 100%;
   background-color: white;
   border-left: 1px solid #e0e0e0;
@@ -267,17 +230,19 @@
 }
 
 .panel-header {
-  padding: 1rem;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 1.25rem;
+  border-bottom: 1px solid #f0f0f0;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-color: #f8f9fa;
 }
 
 .panel-header h3 {
   margin: 0;
-  font-size: 1.1rem;
-  color: #333;
+  font-size: 1.2rem;
+  color: #2d3436;
+  font-weight: 600;
 }
 
 .close-button {
@@ -286,199 +251,41 @@
   font-size: 1.5rem;
   cursor: pointer;
   color: #666;
+  transition: color 0.2s;
 }
 
 .close-button:hover {
-  color: #ff5252;
+  color: #d63031;
 }
 
-/* Furniture Catalog */
-.catalog-items {
-  flex: 1;
-  overflow-y: auto;
-  padding: 1rem;
-}
-
-.catalog-item {
+/* Catalog Panel Styles */
+.catalog-tabs {
   display: flex;
   border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 1rem;
-  margin-bottom: 1rem;
 }
 
-.catalog-thumbnail {
-  width: 80px;
-  height: 80px;
-  border-radius: 4px;
-  overflow: hidden;
-  margin-right: 1rem;
-}
-
-.catalog-thumbnail img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.catalog-details {
+.tab-button {
   flex: 1;
-}
-
-.catalog-details h4 {
-  margin: 0 0 0.5rem 0;
-  color: #333;
-  font-size: 1rem;
-}
-
-.catalog-price {
-  color: #666;
-  font-weight: 500;
-  margin-bottom: 0.75rem;
-}
-
-.add-button {
-  padding: 0.5rem 0.75rem;
-  border: none;
-  border-radius: 4px;
-  background-color: #4a90e2;
-  color: white;
-  cursor: pointer;
-  font-size: 0.85rem;
-  transition: background-color 0.2s;
-}
-
-.add-button:hover {
-  background-color: #3a80d2;
-}
-
-/* Colors Panel */
-.color-categories {
-  display: flex;
-  padding: 0 1rem;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.color-category {
-  padding: 0.75rem 1rem;
+  padding: 0.75rem;
   background: transparent;
   border: none;
-  border-bottom: 3px solid transparent;
+  border-bottom: 2px solid transparent;
   cursor: pointer;
   font-size: 0.9rem;
+  font-weight: 500;
   color: #666;
   transition: all 0.2s;
 }
 
-.color-category.active {
-  color: #4a90e2;
-  border-bottom-color: #4a90e2;
-  font-weight: 500;
+.tab-button:hover {
+  background-color: #f5f5f5;
+  color: #333;
 }
 
-.color-swatches {
-  padding: 1rem;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0.75rem;
-}
-
-.color-swatch {
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 4px;
-  cursor: pointer;
-  border: 1px solid #e0e0e0;
-  transition: transform 0.2s;
-}
-
-.color-swatch:hover {
-  transform: scale(1.1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.custom-color {
-  padding: 1rem;
-  border-top: 1px solid #e0e0e0;
-  display: flex;
-  align-items: center;
-}
-
-.custom-color label {
-  margin-right: 1rem;
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.custom-color input {
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  border: none;
-  cursor: pointer;
-}
-
-/* Responsive design */
-@media (max-width: 1024px) {
-  .catalog-panel,
-  .colors-panel {
-    width: 280px;
-  }
-}
-
-@media (max-width: 768px) {
-  .design-toolbar {
-    width: 60px;
-  }
-
-  .tool-button {
-    width: 48px;
-    height: 48px;
-  }
-
-  .catalog-panel,
-  .colors-panel {
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 100%;
-    z-index: 10;
-  }
-}
-
-@media (max-width: 480px) {
-  .tabs {
-    display: none;
-  }
-
-  .catalog-panel,
-  .colors-panel {
-    width: 100%;
-  }
-}
-/* Add to existing Design.css */
-.remove-button {
-  width: 100%;
-  padding: 0.8rem;
-  background-color: #ffebee;
-  color: #ff5252;
-  border: none;
-  border-radius: 0 0 8px 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
-}
-
-.remove-button:hover {
-  background-color: #ffcdd2;
-}
-
-/* Update catalog panel styles */
-.catalog-panel {
-  width: 300px;
-  background-color: white;
-  border-left: 1px solid #e0e0e0;
-  display: flex;
-  flex-direction: column;
+.tab-button.active {
+  color: #6c5ce7;
+  border-bottom-color: #6c5ce7;
+  background-color: #f5f5f5;
 }
 
 .catalog-items {
@@ -515,6 +322,7 @@
 .catalog-details h4 {
   margin: 0 0 0.5rem 0;
   font-size: 1rem;
+  color: #2d3436;
 }
 
 .catalog-price {
@@ -527,7 +335,7 @@
   padding: 0.5rem 0.75rem;
   border: none;
   border-radius: 4px;
-  background-color: #4a90e2;
+  background-color: #6c5ce7;
   color: white;
   cursor: pointer;
   font-size: 0.85rem;
@@ -535,40 +343,15 @@
 }
 
 .add-button:hover {
-  background-color: #3a80d2;
+  background-color: #5649c0;
 }
 
-/* Catalog panel tabs */
-.catalog-tabs {
-  display: flex;
-  border-bottom: 1px solid #e0e0e0;
-  margin-bottom: 1rem;
+.add-button:disabled {
+  background-color: #66bb6a;
+  cursor: default;
 }
 
-.tab-button {
-  flex: 1;
-  padding: 0.75rem;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #666;
-  transition: all 0.2s;
-}
-
-.tab-button:hover {
-  background-color: #f5f5f5;
-  color: #333;
-}
-
-.tab-button.active {
-  color: #4a90e2;
-  border-bottom-color: #4a90e2;
-}
-
-/* Empty catalog state */
+/* Empty Catalog State */
 .empty-catalog {
   display: flex;
   flex-direction: column;
@@ -585,7 +368,7 @@
 
 .browse-button {
   padding: 0.6rem 1.2rem;
-  background-color: #4a90e2;
+  background-color: #6c5ce7;
   color: white;
   border: none;
   border-radius: 4px;
@@ -595,40 +378,134 @@
 }
 
 .browse-button:hover {
-  background-color: #3a7bc8;
+  background-color: #5649c0;
 }
 
-/* Catalog item browse more */
-.catalog-item.browse-more {
-  border: 1px dashed #ccc;
-  background-color: #f9f9f9;
+/* Wall Colors Panel */
+.wall-colors-panel {
+  width: 340px;
 }
 
-/* Update add button */
-.add-button {
-  display: block;
-  width: 100%;
-  padding: 0.5rem 0;
-  border: none;
-  border-radius: 4px;
-  background-color: #4a90e2;
-  color: white;
-  font-size: 0.9rem;
+.wall-color-section {
+  padding: 1.5rem;
+}
+
+.uniform-color-toggle {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  gap: 0.75rem;
+}
+
+.toggle-label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #6c5ce7;
+}
+
+.toggle-label span {
+  font-size: 1rem;
+  color: #2d3436;
   font-weight: 500;
+}
+
+.color-picker-section {
+  margin-bottom: 1.5rem;
+}
+
+.color-picker-section h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  color: #2d3436;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.color-picker-section h4::before {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.color-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.color-preset {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
+  border: 2px solid transparent;
 }
 
-.add-button:disabled {
-  background-color: #66bb6a;
-  cursor: default;
+.color-preset:hover {
+  transform: scale(1.1);
 }
 
-.add-button:hover:not(:disabled) {
-  background-color: #3a7bc8;
+.color-preset.selected {
+  border-color: #6c5ce7;
+  box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.3);
 }
 
-/* Position and Rotation Controls */
+.color-input {
+  width: 100%;
+  height: 48px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  background: transparent;
+  padding: 4px;
+}
+
+/* Floor Color Section */
+.floor-color-section {
+  padding: 1.5rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* Room Dimensions */
+.room-dimensions {
+  padding: 1.5rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.dimension-control {
+  margin-bottom: 1rem;
+}
+
+.dimension-control label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.dimension-control input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+
+/* Property Panel */
 .property-panel {
   width: 320px;
 }
@@ -641,7 +518,7 @@
 .property-section h4 {
   margin: 0 0 1rem 0;
   font-size: 1rem;
-  color: #333;
+  color: #2d3436;
 }
 
 .slider-group {
@@ -675,7 +552,7 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #4a90e2;
+  background: #6c5ce7;
   cursor: pointer;
   transition: transform 0.2s;
 }
@@ -690,7 +567,7 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #4a90e2;
+  background: #6c5ce7;
   cursor: pointer;
   border: none;
   transition: transform 0.2s;
@@ -701,163 +578,74 @@
   transform: scale(1.2);
 }
 
-.slider-value {
-  font-size: 0.85rem;
-  color: #666;
-  text-align: right;
-}
-
-/* Item details in the property panel */
-.item-details {
-  font-size: 0.9rem;
-  color: #666;
-  line-height: 1.5;
-}
-
-.item-details p {
-  margin: 0.5rem 0;
-}
-
-.item-details strong {
-  color: #333;
-}
-
-/* Room environment styles */
-.design-canvas {
-  background-color: #e6e6e6;
-}
-
-/* Update the catalog panel tabs to be more visually distinct */
-.catalog-tabs button.active {
-  background-color: #f5f5f5;
-  font-weight: 600;
-}
-
-/* Wall Colors Panel */
-.wall-colors-panel {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 320px;
-  height: 100%;
-  background-color: white;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  padding-top: 60px;
-  overflow-y: auto;
-}
-
-.wall-color-section {
-  padding: 1rem;
-}
-
-.uniform-color-toggle {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.toggle-label {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  user-select: none;
-}
-
-.toggle-label input[type="checkbox"] {
-  margin-right: 10px;
-  width: 18px;
-  height: 18px;
-}
-
-.toggle-label span {
-  font-size: 1rem;
-  color: #333;
-}
-
-.color-picker-section {
-  margin-bottom: 1.5rem;
-}
-
-.color-picker-section h4 {
-  margin: 0 0 1rem 0;
-  font-size: 1rem;
-  color: #333;
-  display: flex;
-  align-items: center;
-}
-
-.color-picker-section h4::before {
-  content: "";
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  margin-right: 8px;
-  border-radius: 50%;
-  background-color: currentColor;
-}
-
-.color-picker-section h4.front-wall::before {
-  background-color: var(--front-wall-indicator, #e0e0e0);
-}
-
-.color-picker-section h4.back-wall::before {
-  background-color: var(--back-wall-indicator, #e0e0e0);
-}
-
-.color-picker-section h4.left-wall::before {
-  background-color: var(--left-wall-indicator, #e6e6e6);
-}
-
-.color-picker-section h4.right-wall::before {
-  background-color: var(--right-wall-indicator, #e6e6e6);
-}
-
-.color-presets {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 1rem;
-}
-
-.color-preset {
-  width: 30px;
-  height: 30px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: transform 0.1s;
-  border: 1px solid #ddd;
-  position: relative;
-}
-
-.color-preset:hover {
-  transform: scale(1.1);
-  z-index: 1;
-}
-
-.color-preset.selected {
-  box-shadow: 0 0 0 2px #4a90e2;
-}
-
-.color-input {
+/* Remove Button */
+.remove-button {
   width: 100%;
-  height: 40px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 0.8rem;
+  background-color: #ffebee;
+  color: #ff5252;
+  border: none;
+  border-radius: 0 0 8px 8px;
   cursor: pointer;
-  background: transparent;
+  font-weight: 500;
+  transition: background-color 0.2s;
 }
 
-.individual-walls {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+.remove-button:hover {
+  background-color: #ffcdd2;
 }
 
-/* Tool Icons */
-.walls-icon {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23333'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E");
-  background-size: 24px;
-  background-position: center;
-  background-repeat: no-repeat;
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .catalog-panel,
+  .colors-panel,
+  .wall-colors-panel {
+    width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .design-toolbar {
+    width: 70px;
+  }
+
+  .tool-button {
+    width: 56px;
+    height: 56px;
+  }
+
+  .tool-icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .design-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .design-name-input {
+    width: 180px;
+    font-size: 1rem;
+  }
+  
+  .action-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .catalog-panel,
+  .colors-panel,
+  .wall-colors-panel {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 20;
+  }
+  
+  .property-panel {
+    width: 100%;
+  }
 }
