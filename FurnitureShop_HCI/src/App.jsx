@@ -107,7 +107,6 @@ function App() {
         <Navbar />
         <div className="app">
           <Routes>
-            {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -118,7 +117,6 @@ function App() {
             <Route path="/my-room" element={<MyRoom />} />
             <Route path="/my-inventory" element={<MyInventory />} />
 
-            {/* Admin Routes - Still Protected */}
             <Route
               path="/admin"
               element={
@@ -144,7 +142,6 @@ function App() {
               }
             />
 
-            {/* 404 Route */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
