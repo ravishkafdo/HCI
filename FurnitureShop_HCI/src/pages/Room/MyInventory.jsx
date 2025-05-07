@@ -159,7 +159,7 @@ const MyInventory = () => {
             </div>
             <div className="furniture-info">
               <h4>{item.title}</h4>
-              <p className="furniture-price">${item.price?.toFixed(2) || '0.00'}</p>
+              <p className="furniture-price">Rs {item.price?.toFixed(2) || '0.00'}</p>
             </div>
           </div>
         ))}
@@ -234,7 +234,7 @@ const MyInventory = () => {
                   <div className="item-info">
                     <h3 className="item-title">{item.title}</h3>
                     <p className="item-category">{item.category}</p>
-                    <p className="item-price">${item.price?.toFixed(2) || '0.00'}</p>
+                    <p className="item-price">Rs {item.price?.toFixed(2) || '0.00'}</p>
                     <div className="item-dimensions">
                       <span>Dimensions: </span>
                       {item.dimensions?.width || 0} × {item.dimensions?.height || 0} × {item.dimensions?.length || 0} cm

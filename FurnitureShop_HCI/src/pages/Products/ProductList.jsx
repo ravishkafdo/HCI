@@ -148,7 +148,7 @@ const ProductList = () => {
               </div>
               <div className="product-info">
                 <h3 className="product-title">{product.title}</h3>
-                <div className="product-price">${product.price.toFixed(2)}</div>
+                <div className="product-price">Rs {product.price.toFixed(2)}</div>
                 <div className="product-category">{product.category}</div>
               </div>
               <div className="product-actions-list">

@@ -22,8 +22,7 @@ const Wall = React.forwardRef(({ colorInstance, geometryArgs, ...props }, ref) =
   );
 });
 
-
-const Room = ({ wallColors, floorColor, dimensions }) => {
+const Room = ({ wallColors, floorColor, ceilingColor, dimensions }) => {
   const frontWallRef = useRef();
   const backWallRef = useRef();
   const leftWallRef = useRef();
@@ -40,6 +39,7 @@ const Room = ({ wallColors, floorColor, dimensions }) => {
   }), [wallColors]);
 
   const memoizedFloorColor = useMemo(() => new THREE.Color(floorColor), [floorColor]);
+  const memoizedCeilingColor = useMemo(() => new THREE.Color(ceilingColor), [ceilingColor]);
 
   // Improved wall visibility handling
   useFrame(({ camera }) => {
@@ -103,7 +103,7 @@ const Room = ({ wallColors, floorColor, dimensions }) => {
 
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, height, 0]}>
         <planeGeometry args={[width, depth]} />
-        <meshStandardMaterial color="#f5f5f5" side={THREE.DoubleSide} />
+        <meshStandardMaterial color={memoizedCeilingColor} side={THREE.DoubleSide} />
       </mesh>
 
       {/* All four walls */}
@@ -137,18 +137,33 @@ const Room = ({ wallColors, floorColor, dimensions }) => {
   );
 };
 
-
 // Model component for furniture
-const Model = ({ url, position, rotation, onClick, scale = 1 }) => {
+const Model = ({ url, position, rotation, onClick, scale = 1, dimensions, roomDimensions }) => {
   const { scene } = useGLTF(url);
   const meshRef = useRef();
   
-  // Ensure furniture sits on the floor
+  // Ensure furniture sits on the floor and stays within room bounds
   useEffect(() => {
     if (meshRef.current) {
-      meshRef.current.position.y = position[1];
+      const { width, depth, height } = roomDimensions;
+      const itemWidth = dimensions?.width || 1;
+      const itemDepth = dimensions?.depth || 1;
+      const itemHeight = dimensions?.height || 1;
+      
+      // Calculate safe boundaries considering item dimensions
+      const safeX = (width/2) - (itemWidth/2);
+      const safeZ = (depth/2) - (itemDepth/2);
+      
+      // Clamp position to keep item within room
+      const clampedPosition = [
+        Math.max(-safeX, Math.min(safeX, position[0])),
+        Math.max(0, Math.min(height - itemHeight, position[1])),
+        Math.max(-safeZ, Math.min(safeZ, position[2]))
+      ];
+      
+      meshRef.current.position.set(...clampedPosition);
     }
-  }, [position]);
+  }, [position, dimensions, roomDimensions]);
 
   return (
     <primitive 
@@ -202,7 +217,6 @@ const TwoDView = ({ dimensions, roomItems }) => {
 };
 
 export default function Design() {
-
   const { authState } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
@@ -219,6 +233,7 @@ export default function Design() {
     left: "#D3D3D3", right: "#D3D3D3",
   });
   const [floorColor, setFloorColor] = useState("#BFBFBF");
+  const [ceilingColor, setCeilingColor] = useState("#F5F5F5");
   const [dimensions, setDimensions] = useState({
     width: 20,
     depth: 20,
@@ -238,7 +253,6 @@ export default function Design() {
   const handleAddToRoom = (item) => {
     const exists = roomItems.some((roomItem) => roomItem._id === item._id);
     if (!exists) {
-      // Set initial position with Y based on item height (assuming 0.5 is default height)
       const newItem = { 
         ...item, 
         position: [0, 0.5, 0], 
@@ -261,7 +275,27 @@ export default function Design() {
       const newItems = [...roomItems];
       const item = newItems[selectedItem];
       const newPosition = [...item.position];
-      newPosition[axis] = parseFloat(value);
+      
+      // Get item dimensions or use defaults
+      const itemWidth = item.dimensions?.width || 1;
+      const itemDepth = item.dimensions?.depth || 1;
+      const itemHeight = item.dimensions?.height || 1;
+      
+      // Calculate safe boundaries considering item dimensions
+      const safeX = (dimensions.width/2) - (itemWidth/2);
+      const safeZ = (dimensions.depth/2) - (itemDepth/2);
+      
+      // Clamp the value to keep item within room
+      let clampedValue = parseFloat(value);
+      if (axis === 0) { // X-axis
+        clampedValue = Math.max(-safeX, Math.min(safeX, clampedValue));
+      } else if (axis === 1) { // Y-axis
+        clampedValue = Math.max(0, Math.min(dimensions.height - itemHeight, clampedValue));
+      } else if (axis === 2) { // Z-axis
+        clampedValue = Math.max(-safeZ, Math.min(safeZ, clampedValue));
+      }
+      
+      newPosition[axis] = clampedValue;
       newItems[selectedItem] = { ...item, position: newPosition };
       setRoomItems(newItems);
     }
@@ -287,10 +321,35 @@ export default function Design() {
   };
 
   const handleDimensionChange = (dimension, value) => {
+    const newValue = Math.max(5, Math.min(50, parseFloat(value) || 10));
     setDimensions(prev => ({
       ...prev,
-      [dimension]: Math.max(5, Math.min(50, parseFloat(value) || 10))
+      [dimension]: newValue
     }));
+    
+    // Adjust item positions if they would be outside the new room dimensions
+    setRoomItems(prevItems => {
+      return prevItems.map(item => {
+        const itemWidth = item.dimensions?.width || 1;
+        const itemDepth = item.dimensions?.depth || 1;
+        const itemHeight = item.dimensions?.height || 1;
+        
+        const safeX = (newValue/2) - (itemWidth/2);
+        const safeZ = (dimensions.depth/2) - (itemDepth/2);
+        
+        const newPosition = [...item.position];
+        
+        if (dimension === 'width') {
+          newPosition[0] = Math.max(-safeX, Math.min(safeX, newPosition[0]));
+        } else if (dimension === 'depth') {
+          newPosition[2] = Math.max(-safeZ, Math.min(safeZ, newPosition[2]));
+        } else if (dimension === 'height') {
+          newPosition[1] = Math.max(0, Math.min(newValue - itemHeight, newPosition[1]));
+        }
+        
+        return { ...item, position: newPosition };
+      });
+    });
   };
 
   const handleSaveDesign = () => {
@@ -391,6 +450,7 @@ export default function Design() {
                 <Room 
                   wallColors={wallColors} 
                   floorColor={floorColor}
+                  ceilingColor={ceilingColor}
                   dimensions={dimensions}
                 />
 
@@ -401,6 +461,8 @@ export default function Design() {
                     position={item.position} 
                     rotation={item.rotation}
                     scale={item.scale || 1}
+                    dimensions={item.dimensions}
+                    roomDimensions={dimensions}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleSelectItem(index);
@@ -554,6 +616,27 @@ export default function Design() {
                 type="color" 
                 value={floorColor} 
                 onChange={(e) => setFloorColor(e.target.value)} 
+                className="color-input" 
+              />
+            </div>
+            
+            {/* Ceiling Color Section */}
+            <div className="floor-color-section">
+              <h4>Ceiling Color</h4>
+              <div className="color-presets">
+                {['#F5F5F5', '#E0E0E0', '#BDBDBD', '#9E9E9E', '#FFFFFF', '#E1BEE7', '#BBDEFB', '#C8E6C9'].map(c => (
+                  <div 
+                    key={`ceiling-${c}`} 
+                    className={`color-preset ${ceilingColor === c ? 'selected' : ''}`} 
+                    style={{ backgroundColor: c }} 
+                    onClick={() => setCeilingColor(c)} 
+                  />
+                ))}
+              </div>
+              <input 
+                type="color" 
+                value={ceilingColor} 
+                onChange={(e) => setCeilingColor(e.target.value)} 
                 className="color-input" 
               />
             </div>
