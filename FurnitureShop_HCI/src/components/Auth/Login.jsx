@@ -25,58 +25,6 @@ const Login = () => {
     });
   };
 
-  // Mock user data for demo purposes
-  const mockUsers = {
-    "admin@example.com": {
-      name: "Admin User",
-      email: "admin@example.com",
-      role: "admin",
-      password: "adminpass"
-    },
-    "designer@example.com": {
-      name: "Designer User",
-      email: "designer@example.com",
-      role: "designer",
-      password: "password"
-    }
-  };
-
-  const handleMockLogin = () => {
-    const { email, password } = formData;
-    const user = mockUsers[email];
-
-    if (user && user.password === password) {
-      // Create a mock token
-      const token = `mock-token-${Date.now()}`;
-      
-      // Call the login function from context
-      login(token, user);
-      
-      console.log("Mock authentication successful");
-      
-      // Redirect based on priority
-      setTimeout(() => {
-        if (fromAdmin && user.role === 'admin') {
-          console.log("Redirecting to admin dashboard");
-          navigate(location.state.from.pathname);
-        } else if (fromDesign) {
-          console.log("Redirecting to design page");
-          navigate(location.state.from.pathname);
-        } else if (user.role === 'admin') {
-          console.log("Redirecting to admin dashboard");
-          navigate("/admin");
-        } else {
-          console.log("Redirecting to home page");
-          navigate("/");
-        }
-      }, 100); // Short delay to ensure context updates
-      
-      return true;
-    }
-    
-    return false;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -85,13 +33,7 @@ const Login = () => {
     try {
       console.log("Attempting login with:", formData.email);
       
-      // Try mock login first for demo purposes
-      if (handleMockLogin()) {
-        setIsLoading(false);
-        return;
-      }
-      
-      // If mock login fails, try the real backend
+      // Use the real backend authentication
       const response = await fetch("http://localhost:5001/api/auth/login", {
         method: "POST",
         headers: {
