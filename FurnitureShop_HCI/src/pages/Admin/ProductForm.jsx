@@ -270,9 +270,8 @@ function ProductForm() {
         }
       }
       
-      // Get auth token
+      // Get auth token from localStorage
       const token = localStorage.getItem("token");
-      console.log("Token from localStorage:", token);
       
       if (!token) {
         setError("You must be logged in to perform this action");
@@ -287,22 +286,16 @@ function ProductForm() {
       
       const method = isEditMode ? "PUT" : "POST";
       
-      console.log("Making request to:", url);
-      console.log("Auth header:", `Bearer ${token}`);
-      
-      // Submit form
+      // Submit form with proper authentication
       const response = await fetch(url, {
         method: method,
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`
         },
-        body: productFormData,
-        credentials: "include"
+        body: productFormData
       });
       
-      console.log("Response status:", response.status);
       const data = await response.json();
-      console.log("Response data:", data);
       
       if (!response.ok) {
         throw new Error(data.message || "Failed to save product");
@@ -333,329 +326,310 @@ function ProductForm() {
     <div className="product-form-container">
       <div className="form-header">
         <h1>{isEditMode ? "Edit Product" : "Add New Product"}</h1>
-        <div className="form-actions">
-          <button 
-            className="cancel-btn" 
-            onClick={() => navigate("/admin")}
-            disabled={loading}
-          >
-            Cancel
-          </button>
-          <button 
-            className="save-btn" 
-            onClick={handleSubmit}
-            disabled={loading}
-          >
-            {loading ? "Saving..." : "Save Product"}
-          </button>
-        </div>
       </div>
       
-      {error && <div className="error-message">{error}</div>}
-      {success && <div className="success-message">{success}</div>}
+      {error && (
+        <div className="error-message">
+          <p>{error}</p>
+        </div>
+      )}
+      {success && (
+        <div className="success-message">
+          <p>{success}</p>
+        </div>
+      )}
       
       <form className="product-form" onSubmit={handleSubmit}>
-        <div className="form-grid">
-          {/* Basic Information */}
-          <div className="form-section">
-            <h2>Basic Information</h2>
-            
+        {/* Basic Information */}
+        <div className="form-section">
+          <h2>Product Details</h2>
+          
+          <div className="form-group">
+            <label htmlFor="title">Product Title <span className="required">*</span></label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="description">Description <span className="required">*</span></label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              rows="5"
+              required
+            ></textarea>
+          </div>
+          
+          <div className="form-row">
             <div className="form-group">
-              <label htmlFor="title">Product Title <span className="required">*</span></label>
+              <label htmlFor="price">Price ($) <span className="required">*</span></label>
               <input
-                type="text"
-                id="title"
-                name="title"
-                value={formData.title}
+                type="number"
+                id="price"
+                name="price"
+                min="0"
+                step="0.01"
+                value={formData.price}
                 onChange={handleInputChange}
                 required
               />
             </div>
             
             <div className="form-group">
-              <label htmlFor="description">Description <span className="required">*</span></label>
-              <textarea
-                id="description"
-                name="description"
-                value={formData.description}
+              <label htmlFor="category">Category <span className="required">*</span></label>
+              <select
+                id="category"
+                name="category"
+                value={formData.category}
                 onChange={handleInputChange}
-                rows="5"
                 required
-              ></textarea>
+              >
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="width">Width (cm) <span className="required">*</span></label>
+              <input
+                type="number"
+                id="width"
+                name="width"
+                min="0"
+                step="0.1"
+                value={formData.dimensions.width}
+                onChange={handleDimensionChange}
+                required
+              />
             </div>
             
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="price">Price ($) <span className="required">*</span></label>
+            <div className="form-group">
+              <label htmlFor="height">Height (cm) <span className="required">*</span></label>
+              <input
+                type="number"
+                id="height"
+                name="height"
+                min="0"
+                step="0.1"
+                value={formData.dimensions.height}
+                onChange={handleDimensionChange}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="length">Length (cm) <span className="required">*</span></label>
+              <input
+                type="number"
+                id="length"
+                name="length"
+                min="0"
+                step="0.1"
+                value={formData.dimensions.length}
+                onChange={handleDimensionChange}
+                required
+              />
+            </div>
+          </div>
+          
+          <div className="form-row checkbox-row">
+            <div className="form-group">
+              <label htmlFor="inStock" className="checkbox-label">
                 <input
-                  type="number"
-                  id="price"
-                  name="price"
-                  min="0"
-                  step="0.01"
-                  value={formData.price}
+                  type="checkbox"
+                  id="inStock"
+                  name="inStock"
+                  checked={formData.inStock}
                   onChange={handleInputChange}
-                  required
                 />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="category">Category <span className="required">*</span></label>
-                <select
-                  id="category"
-                  name="category"
-                  value={formData.category}
+                In Stock
+              </label>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="featured" className="checkbox-label">
+                <input
+                  type="checkbox"
+                  id="featured"
+                  name="featured"
+                  checked={formData.featured}
                   onChange={handleInputChange}
-                  required
-                >
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            
-            <div className="form-row checkbox-row">
-              <div className="form-group">
-                <label htmlFor="inStock" className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    id="inStock"
-                    name="inStock"
-                    checked={formData.inStock}
-                    onChange={handleInputChange}
-                  />
-                  In Stock
-                </label>
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="featured" className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    id="featured"
-                    name="featured"
-                    checked={formData.featured}
-                    onChange={handleInputChange}
-                  />
-                  Featured Product
-                </label>
-              </div>
+                />
+                Featured Product
+              </label>
             </div>
           </div>
+        </div>
+        
+        {/* Materials */}
+        <div className="form-section">
+          <h2>Materials</h2>
           
-          {/* Dimensions */}
-          <div className="form-section">
-            <h2>Dimensions</h2>
-            
-            <div className="form-row">
+          {formData.materials.map((material, index) => (
+            <div className="form-row array-row" key={`material-${index}`}>
               <div className="form-group">
-                <label htmlFor="width">Width (cm) <span className="required">*</span></label>
                 <input
-                  type="number"
-                  id="width"
-                  name="width"
-                  min="0"
-                  step="0.1"
-                  value={formData.dimensions.width}
-                  onChange={handleDimensionChange}
-                  required
+                  type="text"
+                  placeholder={`Material ${index + 1}`}
+                  value={material}
+                  onChange={(e) => handleArrayFieldChange(e, index, "materials")}
                 />
               </div>
               
-              <div className="form-group">
-                <label htmlFor="height">Height (cm) <span className="required">*</span></label>
-                <input
-                  type="number"
-                  id="height"
-                  name="height"
-                  min="0"
-                  step="0.1"
-                  value={formData.dimensions.height}
-                  onChange={handleDimensionChange}
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="length">Length (cm) <span className="required">*</span></label>
-                <input
-                  type="number"
-                  id="length"
-                  name="length"
-                  min="0"
-                  step="0.1"
-                  value={formData.dimensions.length}
-                  onChange={handleDimensionChange}
-                  required
-                />
-              </div>
+              <button
+                type="button"
+                className="remove-btn"
+                onClick={() => handleRemoveArrayItem(index, "materials")}
+                disabled={formData.materials.length === 1}
+              >
+                ×
+              </button>
             </div>
-          </div>
+          ))}
           
-          {/* Materials */}
-          <div className="form-section">
-            <h2>Materials</h2>
-            
-            {formData.materials.map((material, index) => (
-              <div className="form-row array-row" key={`material-${index}`}>
-                <div className="form-group">
-                  <input
-                    type="text"
-                    placeholder={`Material ${index + 1}`}
-                    value={material}
-                    onChange={(e) => handleArrayFieldChange(e, index, "materials")}
-                  />
-                </div>
-                
-                <button
-                  type="button"
-                  className="remove-btn"
-                  onClick={() => handleRemoveArrayItem(index, "materials")}
-                  disabled={formData.materials.length === 1}
-                >
-                  <i className="material-icons">remove</i>
-                </button>
-              </div>
-            ))}
-            
-            <button
-              type="button"
-              className="add-btn"
-              onClick={() => handleAddArrayItem("materials")}
-            >
-              <i className="material-icons">add</i> Add Material
-            </button>
-          </div>
+          <button
+            type="button"
+            className="add-btn"
+            onClick={() => handleAddArrayItem("materials")}
+          >
+            + Add Material
+          </button>
+        </div>
+        
+        {/* Colors */}
+        <div className="form-section">
+          <h2>Colors</h2>
           
-          {/* Colors */}
-          <div className="form-section">
-            <h2>Colors</h2>
-            
-            {formData.colors.map((color, index) => (
-              <div className="form-row array-row" key={`color-${index}`}>
-                <div className="form-group color-input-group">
-                  <input
-                    type="text"
-                    placeholder={`Color ${index + 1} (Hex or name)`}
-                    value={color}
-                    onChange={(e) => handleArrayFieldChange(e, index, "colors")}
-                  />
-                  <input
-                    type="color"
-                    value={color.startsWith("#") ? color : "#000000"}
-                    onChange={(e) => handleArrayFieldChange({ target: { value: e.target.value } }, index, "colors")}
-                  />
-                </div>
-                
-                <button
-                  type="button"
-                  className="remove-btn"
-                  onClick={() => handleRemoveArrayItem(index, "colors")}
-                  disabled={formData.colors.length === 1}
-                >
-                  <i className="material-icons">remove</i>
-                </button>
-              </div>
-            ))}
-            
-            <button
-              type="button"
-              className="add-btn"
-              onClick={() => handleAddArrayItem("colors")}
-            >
-              <i className="material-icons">add</i> Add Color
-            </button>
-          </div>
-          
-          {/* Images */}
-          <div className="form-section">
-            <h2>Images</h2>
-            
-            <div className="form-group file-upload">
-              <label>Thumbnail Image <span className="required">*</span></label>
-              <div className="file-input-container">
+          {formData.colors.map((color, index) => (
+            <div className="form-row array-row" key={`color-${index}`}>
+              <div className="form-group color-input-group">
                 <input
-                  type="file"
-                  name="thumbnail"
-                  id="thumbnail"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className={`file-input ${isEditMode && !files.thumbnail ? 'optional' : ''}`}
+                  type="text"
+                  placeholder={`Color ${index + 1} (Hex or name)`}
+                  value={color}
+                  onChange={(e) => handleArrayFieldChange(e, index, "colors")}
                 />
-                <label htmlFor="thumbnail" className="file-label">
-                  <i className="material-icons">cloud_upload</i>
-                  <span>Choose Image</span>
-                </label>
+                <input
+                  type="color"
+                  value={color.startsWith("#") ? color : "#000000"}
+                  onChange={(e) => handleArrayFieldChange({ target: { value: e.target.value } }, index, "colors")}
+                />
               </div>
               
-              {previews.thumbnail && (
-                <div className="image-preview">
-                  <img src={previews.thumbnail} alt="Thumbnail Preview" />
-                </div>
-              )}
+              <button
+                type="button"
+                className="remove-btn"
+                onClick={() => handleRemoveArrayItem(index, "colors")}
+                disabled={formData.colors.length === 1}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+          
+          <button
+            type="button"
+            className="add-btn"
+            onClick={() => handleAddArrayItem("colors")}
+          >
+            + Add Color
+          </button>
+        </div>
+        
+        {/* Images */}
+        <div className="form-section">
+          <h2>Images</h2>
+          
+          <div className="form-group file-upload">
+            <label>Thumbnail Image <span className="required">*</span></label>
+            <div className="file-input-container">
+              <input
+                type="file"
+                name="thumbnail"
+                id="thumbnail"
+                accept="image/*"
+                onChange={handleFileChange}
+                className={`file-input ${isEditMode && !files.thumbnail ? 'optional' : ''}`}
+              />
+              <label htmlFor="thumbnail" className="file-label">
+                <span>Choose Thumbnail</span>
+              </label>
             </div>
             
-            <div className="form-group file-upload">
-              <label>Additional Images</label>
-              <div className="file-input-container">
-                <input
-                  type="file"
-                  name="images"
-                  id="images"
-                  accept="image/*"
-                  multiple
-                  onChange={handleFileChange}
-                  className="file-input"
-                />
-                <label htmlFor="images" className="file-label">
-                  <i className="material-icons">cloud_upload</i>
-                  <span>Choose Images</span>
-                </label>
+            {previews.thumbnail && (
+              <div className="image-preview">
+                <img src={previews.thumbnail} alt="Thumbnail Preview" />
               </div>
-              
-              {previews.images && previews.images.length > 0 && (
-                <div className="image-previews-grid">
-                  {previews.images.map((preview, index) => (
-                    <div className="image-preview" key={`image-${index}`}>
-                      <img src={preview} alt={`Additional Image ${index + 1}`} />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            )}
           </div>
           
-          {/* 3D Model */}
-          <div className="form-section">
-            <h2>3D Model</h2>
-            
-            <div className="form-group file-upload">
-              <label>3D Model (.glb or .gltf) <span className="required">*</span></label>
-              <div className="file-input-container">
-                <input
-                  type="file"
-                  name="model"
-                  id="model"
-                  accept=".glb,.gltf,model/gltf-binary,model/gltf+json"
-                  onChange={handleFileChange}
-                  className={`file-input ${isEditMode && !files.model ? 'optional' : ''}`}
-                />
-                <label htmlFor="model" className="file-label">
-                  <i className="material-icons">cloud_upload</i>
-                  <span>Choose 3D Model</span>
-                </label>
-              </div>
-              
-              {previews.model && (
-                <div className="model-info">
-                  <i className="material-icons">check_circle</i>
-                  <span>3D Model uploaded</span>
-                </div>
-              )}
+          <div className="form-group file-upload">
+            <label>Additional Images</label>
+            <div className="file-input-container">
+              <input
+                type="file"
+                name="images"
+                id="images"
+                accept="image/*"
+                multiple
+                onChange={handleFileChange}
+                className="file-input"
+              />
+              <label htmlFor="images" className="file-label">
+                <span>Choose Images</span>
+              </label>
             </div>
+            
+            {previews.images && previews.images.length > 0 && (
+              <div className="image-previews-grid">
+                {previews.images.map((preview, index) => (
+                  <div className="image-preview" key={`image-${index}`}>
+                    <img src={preview} alt={`Additional Image ${index + 1}`} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+        
+        {/* 3D Model */}
+        <div className="form-section">
+          <h2>3D Model</h2>
+          
+          <div className="form-group file-upload">
+            <label>3D Model (.glb or .gltf) <span className="required">*</span></label>
+            <div className="file-input-container">
+              <input
+                type="file"
+                name="model"
+                id="model"
+                accept=".glb,.gltf,model/gltf-binary,model/gltf+json"
+                onChange={handleFileChange}
+                className={`file-input ${isEditMode && !files.model ? 'optional' : ''}`}
+              />
+              <label htmlFor="model" className="file-label">
+                <span>Choose 3D Model</span>
+              </label>
+            </div>
+            
+            {previews.model && (
+              <div className="model-info">
+                ✓ 3D Model uploaded
+              </div>
+            )}
           </div>
         </div>
         
@@ -681,4 +655,4 @@ function ProductForm() {
   );
 }
 
-export default ProductForm; 
+export default ProductForm;
