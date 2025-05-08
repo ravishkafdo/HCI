@@ -12,7 +12,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../../App";
 import "./MyRoom.css";
 
-// Custom error boundary for 3D model loading
 class ModelErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -36,7 +35,6 @@ class ModelErrorBoundary extends React.Component {
   }
 }
 
-// Loading fallback for Suspense
 const ModelLoadingFallback = () => {
   return (
     <Html center>
@@ -53,7 +51,6 @@ const ModelLoadingFallback = () => {
   );
 };
 
-// Define FallbackCube component
 const FallbackCube = ({ item }) => {
   const ref = useRef();
   return (
@@ -73,13 +70,11 @@ const FurnitureModel = ({ item, selected, onClick, onPositionChange, onRotationC
   const [modelError, setModelError] = useState(false);
   const modelUrl = `http://localhost:5001${item.modelUrl}`;
   
-  // Use a try-catch with useGLTF to handle missing models
   let model;
   try {
     model = useGLTF(modelUrl);
   } catch (error) {
     console.error(`Error loading model: ${modelUrl}`, error);
-    // We'll handle this in the render
   }
   
   const ref = useRef();
@@ -96,7 +91,6 @@ const FurnitureModel = ({ item, selected, onClick, onPositionChange, onRotationC
     }
   }, [item]);
   
-  // If model couldn't be loaded, render a placeholder cube instead
   if (!model || modelError) {
     return (
       <>
@@ -195,7 +189,6 @@ const FurnitureModel = ({ item, selected, onClick, onPositionChange, onRotationC
 const Room = ({ showWalls, wallColors, floorColor, dimensions }) => {
   return (
     <group>
-      {/* Floor */}
       <mesh 
         rotation={[-Math.PI / 2, 0, 0]} 
         position={[0, -0.1, 0]} 
@@ -273,28 +266,23 @@ const MyRoom = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Fetch saved room designs when the component mounts
   useEffect(() => {
     if (authState.isAuthenticated) {
       fetchSavedDesigns();
     }
   }, [authState.isAuthenticated]);
   
-  // Load the design from localStorage as a fallback
   useEffect(() => {
     const savedItems = JSON.parse(localStorage.getItem('roomItems') || '[]');
     console.log('Loaded items from localStorage:', savedItems);
     
-    // Check for invalid model URLs
     const hasInvalidModels = savedItems.some(item => {
-      // Filter out models that don't exist in the server
       const knownModelIds = [
         '95326590-bf9f-4669-acfd-8bd6be2461d8',
         'dac378ba-25dd-4538-b71d-7db98466286d',
         'f71ad59d-c416-4d6c-9035-7211a140c1cc'
       ];
       
-      // Extract UUID from modelUrl
       const modelUrlMatch = item.modelUrl?.match(/\/([^\/]+)\.glb$/);
       const modelId = modelUrlMatch ? modelUrlMatch[1] : null;
       
@@ -348,14 +336,13 @@ const MyRoom = () => {
     setCurrentDesign(design);
     setRoomItems(design.items || []);
     
-    // Load other design properties
     if (design.wallColors) setWallColors(design.wallColors);
     if (design.floorColor) setFloorColor(design.floorColor);
     if (design.dimensions) setDimensions(design.dimensions);
   };
   
   const handleDeleteDesign = async (designId, e) => {
-    e.stopPropagation(); // Prevent triggering the loadDesign function
+    e.stopPropagation(); 
     
     if (!window.confirm('Are you sure you want to delete this design? This action cannot be undone.')) {
       return;
@@ -379,16 +366,13 @@ const MyRoom = () => {
         throw new Error('Failed to delete design');
       }
       
-      // Remove the design from the list
       setSavedDesigns(prev => prev.filter(design => design._id !== designId));
       
-      // If the deleted design was currently loaded, reset the room
       if (currentDesign?._id === designId) {
         setCurrentDesign(null);
         setRoomItems([]);
       }
       
-      // Show success message
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (error) {
@@ -432,7 +416,6 @@ const MyRoom = () => {
       setSelectedItem(null);
     }
     
-    // If this is from a saved design, mark it as modified
     if (currentDesign) {
       setCurrentDesign({
         ...currentDesign,
@@ -462,7 +445,6 @@ const MyRoom = () => {
       let endpoint = 'http://localhost:5001/api/room-designs';
       let method = 'POST';
       
-      // If we're updating an existing design
       if (currentDesign && currentDesign._id) {
         endpoint = `${endpoint}/${currentDesign._id}`;
         method = 'PUT';
@@ -493,10 +475,8 @@ const MyRoom = () => {
       
       const result = await response.json();
       
-      // Update current design with the saved version
       setCurrentDesign(result.data);
       
-      // Also update in the list of saved designs
       setSavedDesigns(prev => {
         const updatedList = [...prev];
         const existingIndex = updatedList.findIndex(d => d._id === result.data._id);
@@ -510,7 +490,6 @@ const MyRoom = () => {
         return updatedList;
       });
       
-      // Also update localStorage for backup
       localStorage.setItem('roomItems', JSON.stringify(roomItems));
       
       setSaveSuccess(true);

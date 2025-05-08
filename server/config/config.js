@@ -1,4 +1,3 @@
-// Export environment variables for use throughout the application
 module.exports = {
   JWT_SECRET: process.env.JWT_SECRET,
   PORT: process.env.PORT || 5001,

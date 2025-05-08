@@ -6,7 +6,6 @@ import * as THREE from "three";
 import "./Design.css";
 import { AuthContext } from "../../App";
 
-// Wall Component
 const Wall = React.forwardRef(({ colorInstance, geometryArgs, ...props }, ref) => {
   return (
     <mesh ref={ref} {...props} receiveShadow>
@@ -30,7 +29,6 @@ const Room = ({ wallColors, floorColor, ceilingColor, dimensions }) => {
 
   const { width, depth, height } = dimensions;
 
-  // Memoize colors
   const memoizedWallColors = useMemo(() => ({
     front: new THREE.Color(wallColors.front),
     back: new THREE.Color(wallColors.back),
@@ -41,31 +39,25 @@ const Room = ({ wallColors, floorColor, ceilingColor, dimensions }) => {
   const memoizedFloorColor = useMemo(() => new THREE.Color(floorColor), [floorColor]);
   const memoizedCeilingColor = useMemo(() => new THREE.Color(ceilingColor), [ceilingColor]);
 
-  // Improved wall visibility handling
   useFrame(({ camera }) => {
     if (!frontWallRef.current || !backWallRef.current || 
         !leftWallRef.current || !rightWallRef.current) return;
 
-    // Get camera position relative to room center
     const cameraPos = camera.position.clone();
     
-    // Calculate which walls are between camera and room center
-    const hideFront = cameraPos.z > depth/2; // Camera is in front of front wall
-    const hideBack = cameraPos.z < -depth/2; // Camera is behind back wall
-    const hideLeft = cameraPos.x < -width/2; // Camera is left of left wall
-    const hideRight = cameraPos.x > width/2; // Camera is right of right wall
+    const hideFront = cameraPos.z > depth/2; 
+    const hideBack = cameraPos.z < -depth/2; 
+    const hideLeft = cameraPos.x < -width/2; 
+    const hideRight = cameraPos.x > width/2; 
 
-    // Only hide walls when camera is outside
     const isOutside = hideFront || hideBack || hideLeft || hideRight || cameraPos.y > height;
 
     if (isOutside) {
-      // Hide walls that are between camera and room center
       frontWallRef.current.material.opacity = hideFront ? 0 : 0.6;
       backWallRef.current.material.opacity = hideBack ? 0 : 0.6;
       leftWallRef.current.material.opacity = hideLeft ? 0 : 0.6;
       rightWallRef.current.material.opacity = hideRight ? 0 : 0.6;
 
-      // Special case: when looking diagonally from a corner, ensure we don't hide too many walls
       const diagonalView = 
         (hideFront && hideLeft) || 
         (hideFront && hideRight) || 
@@ -73,7 +65,6 @@ const Room = ({ wallColors, floorColor, ceilingColor, dimensions }) => {
         (hideBack && hideRight);
 
       if (diagonalView) {
-        // When looking from a corner, keep one side wall visible
         if (hideFront && hideLeft) {
           rightWallRef.current.material.opacity = 0.6;
         } else if (hideFront && hideRight) {
@@ -85,7 +76,6 @@ const Room = ({ wallColors, floorColor, ceilingColor, dimensions }) => {
         }
       }
     } else {
-      // Inside the room - show all walls
       frontWallRef.current.material.opacity = 0.6;
       backWallRef.current.material.opacity = 0.6;
       leftWallRef.current.material.opacity = 0.6;
@@ -95,19 +85,16 @@ const Room = ({ wallColors, floorColor, ceilingColor, dimensions }) => {
 
   return (
     <group>
-      {/* Floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
         <planeGeometry args={[width, depth]} />
         <meshStandardMaterial color={memoizedFloorColor} side={THREE.DoubleSide} />
       </mesh>
 
-      {/* Ceiling */}
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, height, 0]} receiveShadow>
         <planeGeometry args={[width, depth]} />
         <meshStandardMaterial color={memoizedCeilingColor} side={THREE.DoubleSide} />
       </mesh>
 
-      {/* All four walls */}
       <Wall 
         ref={backWallRef} 
         position={[0, height / 2, -depth / 2]} 
@@ -138,12 +125,10 @@ const Room = ({ wallColors, floorColor, ceilingColor, dimensions }) => {
   );
 };
 
-// Model component for furniture
 const Model = ({ url, position, rotation, onClick, scale = 1 }) => {
   const { scene } = useGLTF(url);
   const meshRef = useRef();
   
-  // Ensure furniture sits on the floor
   useEffect(() => {
     if (meshRef.current) {
       meshRef.current.position.y = position[1];
@@ -163,15 +148,13 @@ const Model = ({ url, position, rotation, onClick, scale = 1 }) => {
   );
 };
 
-// 2D View Component
 const TwoDView = ({ dimensions, roomItems }) => {
   const { width, depth } = dimensions;
-  const scale = 20; // Scale factor for SVG coordinates
+  const scale = 20; 
 
   return (
     <div className="two-d-view">
       <svg viewBox={`${-width/2*scale} ${-depth/2*scale} ${width*scale} ${depth*scale}`}>
-        {/* Room outline */}
         <rect 
           x={-width/2*scale} 
           y={-depth/2*scale} 
@@ -182,12 +165,11 @@ const TwoDView = ({ dimensions, roomItems }) => {
           strokeWidth="2"
         />
         
-        {/* Furniture items */}
         {roomItems.map((item, index) => (
           <rect
             key={index}
             x={item.position[0]*scale - 5} 
-            y={-item.position[2]*scale - 5} // Invert Z for SVG Y
+            y={-item.position[2]*scale - 5} 
             width="10"
             height="10"
             fill="#6c5ce7"
@@ -238,7 +220,6 @@ export default function Design() {
   const handleAddToRoom = (item) => {
     const exists = roomItems.some((roomItem) => roomItem._id === item._id);
     if (!exists) {
-      // Set initial position with Y based on item height (assuming 0.5 is default height)
       const newItem = { 
         ...item, 
         position: [0, 0.5, 0], 
@@ -300,9 +281,7 @@ export default function Design() {
     }
     
     try {
-      // Show loading indicator if needed
       
-      // Save to database
       const designData = {
         name: designName,
         items: roomItems,
@@ -312,7 +291,6 @@ export default function Design() {
         dimensions
       };
       
-      // Log token for debugging
       console.log('Auth token:', authState.token);
       
       const response = await fetch('http://localhost:5001/api/room-designs', {
@@ -337,14 +315,11 @@ export default function Design() {
         throw new Error(result.message || 'Failed to save design');
       }
       
-      // Also save to localStorage as a backup
       localStorage.setItem("roomItems", JSON.stringify(roomItems));
       
-      // Navigate to the my-room page
       navigate("/my-room");
     } catch (error) {
       console.error('Error saving design:', error);
-      // Handle error (show error message)
       alert('Failed to save design: ' + error.message);
     }
   };
@@ -470,7 +445,6 @@ export default function Design() {
           </div>
         </div>
 
-        {/* Furniture Catalog Panel */}
         {showFurnitureCatalog && (
           <div className="catalog-panel">
             <div className="panel-header">
@@ -516,7 +490,6 @@ export default function Design() {
           </div>
         )}
 
-        {/* Wall Colors Panel */}
         {showWallColors && (
           <div className="wall-colors-panel">
             <div className="panel-header">
@@ -585,7 +558,6 @@ export default function Design() {
               )}
             </div>
             
-            {/* Floor Color Section */}
             <div className="floor-color-section">
               <h4>Floor Color</h4>
               <div className="color-presets">
@@ -606,7 +578,6 @@ export default function Design() {
               />
             </div>
             
-            {/* Ceiling Color Section */}
             <div className="floor-color-section">
               <h4>Ceiling Color</h4>
               <div className="color-presets">
@@ -627,7 +598,6 @@ export default function Design() {
               />
             </div>
             
-            {/* Room Dimensions Section */}
             <div className="room-dimensions">
               <h4>Room Dimensions (meters)</h4>
               <div className="dimension-control">
@@ -667,7 +637,6 @@ export default function Design() {
           </div>
         )}
 
-        {/* Selected Item Properties Panel */}
         {selectedItem !== null && roomItems[selectedItem] && (
           <div className="colors-panel property-panel">
             <div className="panel-header">

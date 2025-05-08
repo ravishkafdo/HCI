@@ -5,16 +5,14 @@ const config = require("../config/config");
 const { sendWelcomeEmail } = require("../services/emailService");
 
 
-// Helper function to generate token
 const generateToken = (userId) => {
   return jwt.sign(
     { id: userId },
     config.JWT_SECRET,
-    { expiresIn: "24h" } // Token expires in 24 hours
+    { expiresIn: "24h" } 
   );
 };
 
-// @desc    Register new user
 exports.register = async (req, res) => {
   try {
     const { name, email, mobileNumber, password, role } = req.body;
@@ -72,9 +70,6 @@ exports.register = async (req, res) => {
   }
 };
 
-// @desc    Create admin user (development only)
-// @route   POST /api/auth/create-admin
-// @access  Public (should be restricted in production)
 exports.createAdmin = async (req, res) => {
   try {
     // Check if we're in development mode
@@ -129,36 +124,27 @@ exports.createAdmin = async (req, res) => {
   }
 };
 
-// @desc    Authenticate user
-// @route   POST /api/auth/login
-// @access  Public
-// In authController.js
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Hardcoded admin credentials
     const ADMIN_EMAIL = 'admin@example.com';
     const ADMIN_PASSWORD = 'adminpass';
 
-    // Check if credentials match hardcoded admin
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      // Create admin user object
       const adminUser = {
-        _id: '645f1c5b3c8c1234567890ab', // Fixed ID for admin
+        _id: '645f1c5b3c8c1234567890ab', 
         name: 'Admin User',
         email: ADMIN_EMAIL,
         role: 'admin'
       };
 
-      // Create token
       const token = jwt.sign(
         { id: adminUser._id },
         process.env.JWT_SECRET,
-        { expiresIn: "7d" } // Extend to 7 days instead of 24h
+        { expiresIn: "7d" } 
       );
 
-      // Return admin data
       return res.json({
         success: true,
         token,
@@ -166,7 +152,6 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Regular database authentication if not hardcoded admin
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
       return res.status(401).json({
@@ -175,7 +160,6 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Verify password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(401).json({
@@ -184,14 +168,12 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Create token
     const token = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" } // Extend to 7 days instead of 24h
+      { expiresIn: "7d" } 
     );
 
-    // Return user data (without password)
     const userWithoutPassword = user.toObject();
     delete userWithoutPassword.password;
 
@@ -210,9 +192,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// @desc    Get user profile
-// @route   GET /api/auth/profile
-// @access  Private
+
 exports.getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
@@ -237,9 +217,7 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// @desc    Update user profile
-// @route   PUT /api/auth/profile
-// @access  Private
+
 exports.updateProfile = async (req, res) => {
   try {
     const { name, mobileNumber } = req.body;

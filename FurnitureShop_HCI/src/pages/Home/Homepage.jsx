@@ -152,7 +152,7 @@ function Homepage() {
                     <h3>{item.name || item.title}</h3>
                     <span className="furniture-category">{item.category}</span>
                     <div className="furniture-meta">
-                      <span className="furniture-price">${item.price ? item.price.toFixed(2) : 'N/A'}</span>
+                      <span className="furniture-price">Rs {item.price ? item.price.toFixed(2) : 'N/A'}</span>
                     </div>
                     <button 
                       className="view-design-btn"

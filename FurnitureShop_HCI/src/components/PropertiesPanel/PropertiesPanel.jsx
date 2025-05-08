@@ -26,7 +26,6 @@ export default function PropertiesPanel() {
     removeFurniture(selected.id);
   };
 
-  // Convert rotation from radians to degrees for display
   const rotationDegrees = ((selected.rotation || 0) * 180 / Math.PI) % 360;
 
   return (
@@ -72,7 +71,6 @@ export default function PropertiesPanel() {
         <Slider
           value={rotationDegrees}
           onChange={(e, value) => {
-            // Convert degrees back to radians for storage
             const radiansValue = (value * Math.PI / 180);
             updateFurniture(selected.id, { rotation: radiansValue });
           }}

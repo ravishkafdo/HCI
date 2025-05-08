@@ -25,7 +25,6 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
   const location = useLocation();
   const { authState } = useAuth();
   
-  // Don't render until authentication check is complete
   if (authState.isLoading) {
     return <div>Loading...</div>;
   }

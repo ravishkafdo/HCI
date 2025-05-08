@@ -245,14 +245,12 @@ const MyInventory = () => {
                       className="view-3d-btn"
                       onClick={() => handleViewModel(item)}
                     >
-                      <span className="view-icon">👁️</span>
                       View 3D
                     </button>
                     <button 
                       className="remove-btn"
                       onClick={() => handleRemoveItem(item._id)}
                     >
-                      <span className="remove-icon">🗑️</span>
                       Remove
                     </button>
                   </div>

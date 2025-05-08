@@ -3,16 +3,15 @@ const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
-    // Mask password in connection string for logging
     const maskedUri = process.env.MONGO_URI.replace(/:[^@]+@/, ":*****@");
     console.log("Connecting to MongoDB with URI:", maskedUri);
 
     await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+      serverSelectionTimeoutMS: 5000, 
     });
 
     console.log("MongoDB Connected");
-    return mongoose.connection; // Return the connection instance
+    return mongoose.connection;
   } catch (error) {
     console.error("\nMongoDB Connection Failed:\n");
     console.error("Full Error:", error);
@@ -21,7 +20,6 @@ const connectDB = async () => {
     console.error("2. Check your connection string in .env file");
     console.error("3. Ensure your database user has proper privileges");
     console.error("4. Verify your network connection");
-    // Instead of process.exit, throw the error to be caught by caller
     throw error;
   }
 };

@@ -18,12 +18,9 @@ function AdminPanel() {
 
   const navigate = useNavigate();
 
-  // Socket.io connection for real-time updates
   useEffect(() => {
-    // Join admin room for exclusive updates
     socket.emit("join-admin");
 
-    // Listen for product updates
     socket.on("product-updated", (data) => {
       showToast(data.message || "Product catalog updated", "success");
       fetchProducts();
@@ -34,7 +31,6 @@ function AdminPanel() {
     };
   }, []);
 
-  // Categories for the filter
   const categories = [
     "All",
     "Living Room",
@@ -44,12 +40,10 @@ function AdminPanel() {
     "Storage",
   ];
 
-  // Fetch products with filters
   const fetchProducts = async () => {
     try {
       setLoading(true);
 
-      // Build query parameters
       const params = new URLSearchParams();
       if (selectedCategory !== "All")
         params.append("category", selectedCategory);
@@ -77,19 +71,16 @@ function AdminPanel() {
     }
   };
 
-  // Fetch products when filters or pagination changes
   useEffect(() => {
     fetchProducts();
   }, [selectedCategory, currentPage]);
 
-  // Handle search
   const handleSearch = (e) => {
     e.preventDefault();
-    setCurrentPage(1); // Reset to first page on new search
+    setCurrentPage(1); 
     fetchProducts();
   };
 
-  // Handle product deletion
   const handleDeleteProduct = async (id) => {
     if (!window.confirm("Are you sure you want to delete this product?"))
       return;
@@ -106,7 +97,6 @@ function AdminPanel() {
 
       if (!response.ok) throw new Error("Failed to delete product");
 
-      // Emit socket event for real-time update
       socket.emit("product-update", {
         action: "delete",
         message: "Product deleted successfully",
@@ -119,21 +109,18 @@ function AdminPanel() {
     }
   };
 
-  // Show toast notification
   const showToast = (message, type) => {
     setToast({ show: true, message, type });
     setTimeout(() => setToast({ show: false, message: "", type: "" }), 3000);
   };
 
-  // Handle category filter change
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
-    setCurrentPage(1); // Reset to first page on category change
+    setCurrentPage(1);
   };
 
   return (
     <div className="admin-panel">
-      {/* Top Bar */}
       <div className="admin-header">
         <h1>Admin Dashboard</h1>
         <div className="admin-actions">
@@ -151,7 +138,6 @@ function AdminPanel() {
         </div>
       </div>
 
-      {/* Navigation Tabs */}
       <div className="admin-tabs">
         <button
           className={`admin-tab ${activeTab === "products" ? "active" : ""}`}
@@ -179,10 +165,8 @@ function AdminPanel() {
         </button>
       </div>
 
-      {/* Products Tab Content */}
       {activeTab === "products" && (
         <div className="admin-content">
-          {/* Filters and Search */}
           <div className="admin-toolbar">
             <div className="category-filter">
               {categories.map((category) => (
@@ -211,7 +195,6 @@ function AdminPanel() {
             </form>
           </div>
 
-          {/* Products Table */}
           {loading ? (
             <div className="loading-spinner">Loading...</div>
           ) : error ? (
@@ -286,7 +269,6 @@ function AdminPanel() {
                 </tbody>
               </table>
 
-              {/* Pagination */}
               {totalPages > 1 && (
                 <div className="pagination">
                   <button
@@ -319,7 +301,6 @@ function AdminPanel() {
         </div>
       )}
 
-      {/* Other tabs (placeholder) */}
       {activeTab === "orders" && (
         <div className="admin-content">
           <h2>Orders Management</h2>
@@ -341,7 +322,6 @@ function AdminPanel() {
         </div>
       )}
 
-      {/* Toast notification */}
       {toast.show && (
         <div className={`toast-notification ${toast.type}`}>
           {toast.message}

@@ -1,4 +1,3 @@
-// Navbar.jsx - Updated with Animation Classes
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Navbar.css";
@@ -95,15 +94,6 @@ const Navbar = () => {
                 </div>
                 
                 <div className="dropdown-links">
-                  <Link to="/profile" className="dropdown-link">
-                    My Profile
-                  </Link>
-                  <Link to="/my-room" className="dropdown-link">
-                    My Room
-                  </Link>
-                  <Link to="/my-inventory" className="dropdown-link">
-                    My Inventory
-                  </Link>
                   {authState.user?.role === "designer" && (
                     <Link to="/designs" className="dropdown-link">
                       My Designs

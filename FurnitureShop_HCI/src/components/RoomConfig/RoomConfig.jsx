@@ -5,7 +5,7 @@ import "./RoomConfig.css";
 
 export default function RoomConfig({ open, onClose }) {
   const [roomSpecs, setRoomSpecs] = useState({
-    shape: "rectangular", // rectangular, L-shaped, circular
+    shape: "rectangular", 
     width: 12,
     length: 15,
     ceilingHeight: 8.5,
@@ -19,7 +19,6 @@ export default function RoomConfig({ open, onClose }) {
   const room = useDesignStore((state) => state.room);
   const setRoomConfig = useDesignStore((state) => state.setRoom);
 
-  // Update local state if the room in the store changes
   useEffect(() => {
     if (room) {
       setRoomSpecs({
@@ -35,7 +34,6 @@ export default function RoomConfig({ open, onClose }) {
   }, [room]);
 
   const handleApplyChanges = () => {
-    // Convert feet to meters for 3D rendering (assuming 1 foot = 0.3048 meters)
     const roomData = {
       shape: roomSpecs.shape,
       width: roomSpecs.width,

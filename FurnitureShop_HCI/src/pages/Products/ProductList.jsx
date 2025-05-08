@@ -36,7 +36,6 @@ const ProductList = () => {
         const data = await response.json();
         let filteredProducts = data.products || [];
         
-        // Filter by product title (name) on client side if search term exists
         if (searchTerm.trim()) {
           filteredProducts = filteredProducts.filter(product =>
             product.title.toLowerCase().includes(searchTerm.trim().toLowerCase())
