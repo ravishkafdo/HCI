@@ -155,7 +155,7 @@ exports.login = async (req, res) => {
       const token = jwt.sign(
         { id: adminUser._id },
         process.env.JWT_SECRET,
-        { expiresIn: "24h" }
+        { expiresIn: "7d" } // Extend to 7 days instead of 24h
       );
 
       // Return admin data
@@ -188,7 +188,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
-      { expiresIn: "24h" }
+      { expiresIn: "7d" } // Extend to 7 days instead of 24h
     );
 
     // Return user data (without password)

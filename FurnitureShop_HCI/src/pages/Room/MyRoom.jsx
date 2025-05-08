@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, useRef } from "react";
+import React, { useState, useEffect, Suspense, useRef, useContext } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { 
   OrbitControls, 
@@ -8,11 +8,80 @@ import {
   Html
 } from "@react-three/drei";
 import { Vector3 } from "three";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { AuthContext } from "../../App";
 import "./MyRoom.css";
 
+// Custom error boundary for 3D model loading
+class ModelErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("Model loading error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback || <div>Error loading model</div>;
+    }
+
+    return this.props.children;
+  }
+}
+
+// Loading fallback for Suspense
+const ModelLoadingFallback = () => {
+  return (
+    <Html center>
+      <div style={{ 
+        background: "rgba(0,0,0,0.7)",
+        color: "white",
+        padding: "10px 20px",
+        borderRadius: "4px",
+        fontFamily: "Arial, sans-serif"
+      }}>
+        Loading furniture...
+      </div>
+    </Html>
+  );
+};
+
+// Define FallbackCube component
+const FallbackCube = ({ item }) => {
+  const ref = useRef();
+  return (
+    <mesh ref={ref} position={item?.position || [0, 0.5, 0]} scale={item?.scale || [1,1,1]}>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color="red" wireframe />
+      <Html position={[0, 0.75, 0]} center>
+        <div style={{ color: 'white', background: 'rgba(0,0,0,0.5)', padding: '2px 5px', borderRadius: '3px' }}>
+          {item?.title || 'Model Error'}
+        </div>
+      </Html>
+    </mesh>
+  );
+};
+
 const FurnitureModel = ({ item, selected, onClick, onPositionChange, onRotationChange }) => {
-  const { scene } = useGLTF(`http://localhost:5001${item.modelUrl}`);
+  const [modelError, setModelError] = useState(false);
+  const modelUrl = `http://localhost:5001${item.modelUrl}`;
+  
+  // Use a try-catch with useGLTF to handle missing models
+  let model;
+  try {
+    model = useGLTF(modelUrl);
+  } catch (error) {
+    console.error(`Error loading model: ${modelUrl}`, error);
+    // We'll handle this in the render
+  }
+  
   const ref = useRef();
   
   useEffect(() => {
@@ -27,35 +96,87 @@ const FurnitureModel = ({ item, selected, onClick, onPositionChange, onRotationC
     }
   }, [item]);
   
+  // If model couldn't be loaded, render a placeholder cube instead
+  if (!model || modelError) {
+    return (
+      <>
+        {selected && (
+          <TransformControls
+            object={ref}
+            mode="translate"
+            showX={true}
+            showY={true}
+            showZ={true}
+            onObjectChange={() => {
+              if (ref.current) {
+                const newPosition = [
+                  ref.current.position.x,
+                  ref.current.position.y,
+                  ref.current.position.z
+                ];
+                onPositionChange(item._id, newPosition);
+                
+                const newRotation = [
+                  ref.current.rotation.x,
+                  ref.current.rotation.y,
+                  ref.current.rotation.z
+                ];
+                onRotationChange(item._id, newRotation);
+              }
+            }}
+          />
+        )}
+        <mesh 
+          ref={ref}
+          scale={2}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick(item._id);
+          }}
+        >
+          <boxGeometry args={[1, 1, 1]} />
+          <meshStandardMaterial color="red" />
+        </mesh>
+        {selected && (
+          <Html position={[0, 2, 0]} center>
+            <div className="model-label">{item.title} (Model not found)</div>
+          </Html>
+        )}
+      </>
+    );
+  }
+  
   return (
     <>
-      <TransformControls
-        object={ref}
-        mode={selected ? "translate" : null}
-        showX={selected}
-        showY={selected}
-        showZ={selected}
-        onObjectChange={() => {
-          if (ref.current) {
-            const newPosition = [
-              ref.current.position.x,
-              ref.current.position.y,
-              ref.current.position.z
-            ];
-            onPositionChange(item._id, newPosition);
-            
-            const newRotation = [
-              ref.current.rotation.x,
-              ref.current.rotation.y,
-              ref.current.rotation.z
-            ];
-            onRotationChange(item._id, newRotation);
-          }
-        }}
-      />
+      {selected && (
+        <TransformControls
+          object={ref}
+          mode="translate"
+          showX={true}
+          showY={true}
+          showZ={true}
+          onObjectChange={() => {
+            if (ref.current) {
+              const newPosition = [
+                ref.current.position.x,
+                ref.current.position.y,
+                ref.current.position.z
+              ];
+              onPositionChange(item._id, newPosition);
+              
+              const newRotation = [
+                ref.current.rotation.x,
+                ref.current.rotation.y,
+                ref.current.rotation.z
+              ];
+              onRotationChange(item._id, newRotation);
+            }
+          }}
+        />
+      )}
       <primitive 
         ref={ref}
-        object={scene} 
+        object={model.scene} 
         scale={2}
         onClick={(e) => {
           e.stopPropagation();
@@ -71,7 +192,7 @@ const FurnitureModel = ({ item, selected, onClick, onPositionChange, onRotationC
   );
 };
 
-const Room = ({ showWalls }) => {
+const Room = ({ showWalls, wallColors, floorColor, dimensions }) => {
   return (
     <group>
       {/* Floor */}
@@ -80,25 +201,25 @@ const Room = ({ showWalls }) => {
         position={[0, -0.1, 0]} 
         receiveShadow
       >
-        <planeGeometry args={[20, 20]} />
-        <meshStandardMaterial color="#f0f0f0" />
+        <planeGeometry args={[dimensions.width, dimensions.depth]} />
+        <meshStandardMaterial color={floorColor} />
       </mesh>
       
       {showWalls && (
         <>
-          <mesh position={[0, 5, -10]} receiveShadow>
-            <boxGeometry args={[20, 10, 0.2]} />
-            <meshStandardMaterial color="#e1e1e1" />
+          <mesh position={[0, dimensions.height, -10]} receiveShadow>
+            <boxGeometry args={[dimensions.width, 10, 0.2]} />
+            <meshStandardMaterial color={wallColors.all} />
           </mesh>
           
-          <mesh position={[-10, 5, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
-            <boxGeometry args={[20, 10, 0.2]} />
-            <meshStandardMaterial color="#d5d5d5" />
+          <mesh position={[-10, dimensions.height, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
+            <boxGeometry args={[dimensions.width, 10, 0.2]} />
+            <meshStandardMaterial color={wallColors.front} />
           </mesh>
           
-          <mesh position={[10, 5, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
-            <boxGeometry args={[20, 10, 0.2]} />
-            <meshStandardMaterial color="#d5d5d5" />
+          <mesh position={[10, dimensions.height, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
+            <boxGeometry args={[dimensions.width, 10, 0.2]} />
+            <meshStandardMaterial color={wallColors.back} />
           </mesh>
         </>
       )}
@@ -130,17 +251,108 @@ const CameraController = () => {
 };
 
 const MyRoom = () => {
+  const { authState } = useContext(AuthContext);
   const [roomItems, setRoomItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [showWalls, setShowWalls] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [savedDesigns, setSavedDesigns] = useState([]);
+  const [loadingDesigns, setLoadingDesigns] = useState(false);
+  const [currentDesign, setCurrentDesign] = useState(null);
+  const [wallColors, setWallColors] = useState({
+    all: "#E0E0E0", front: "#E0E0E0", back: "#E0E0E0",
+    left: "#D3D3D3", right: "#D3D3D3",
+  });
+  const [floorColor, setFloorColor] = useState("#BFBFBF");
+  const [dimensions, setDimensions] = useState({
+    width: 20,
+    depth: 20,
+    height: 5
+  });
   const navigate = useNavigate();
+  const location = useLocation();
   
+  // Fetch saved room designs when the component mounts
+  useEffect(() => {
+    if (authState.isAuthenticated) {
+      fetchSavedDesigns();
+    }
+  }, [authState.isAuthenticated]);
+  
+  // Load the design from localStorage as a fallback
   useEffect(() => {
     const savedItems = JSON.parse(localStorage.getItem('roomItems') || '[]');
-    setRoomItems(savedItems);
-  }, []);
+    console.log('Loaded items from localStorage:', savedItems);
+    
+    // Check for invalid model URLs
+    const hasInvalidModels = savedItems.some(item => {
+      // Filter out models that don't exist in the server
+      const knownModelIds = [
+        '95326590-bf9f-4669-acfd-8bd6be2461d8',
+        'dac378ba-25dd-4538-b71d-7db98466286d',
+        'f71ad59d-c416-4d6c-9035-7211a140c1cc'
+      ];
+      
+      // Extract UUID from modelUrl
+      const modelUrlMatch = item.modelUrl?.match(/\/([^\/]+)\.glb$/);
+      const modelId = modelUrlMatch ? modelUrlMatch[1] : null;
+      
+      return modelId && !knownModelIds.includes(modelId);
+    });
+    
+    if (hasInvalidModels) {
+      console.warn('Some models in localStorage may not exist on server!');
+    }
+    
+    if (savedItems.length > 0 && !currentDesign) {
+      setRoomItems(savedItems);
+    }
+  }, [currentDesign]);
+  
+  const fetchSavedDesigns = async () => {
+    if (!authState.isAuthenticated) return;
+    
+    try {
+      setLoadingDesigns(true);
+      console.log('Auth token in MyRoom:', authState.token);
+      
+      const response = await fetch('http://localhost:5001/api/room-designs', {
+        method: 'GET',
+        headers: {
+          ...(authState.token ? { 'Authorization': `Bearer ${authState.token}` } : {})
+        },
+        credentials: 'include'
+      });
+      
+      if (response.status === 401) {
+        console.error('Authentication error - redirecting to login');
+        navigate('/login', { state: { from: location, message: 'Your session has expired. Please login again.' } });
+        return;
+      }
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch saved designs');
+      }
+      
+      const data = await response.json();
+      setSavedDesigns(data.data || []);
+    } catch (error) {
+      console.error('Error fetching saved designs:', error);
+    } finally {
+      setLoadingDesigns(false);
+    }
+  };
+  
+  const loadDesign = (design) => {
+    setCurrentDesign(design);
+    setRoomItems(design.items || []);
+    
+    // Load other design properties
+    if (design.wallColors) setWallColors(design.wallColors);
+    if (design.floorColor) setFloorColor(design.floorColor);
+    if (design.dimensions) setDimensions(design.dimensions);
+  };
   
   const handlePositionChange = (itemId, position) => {
     setRoomItems(prev => 
@@ -172,46 +384,113 @@ const MyRoom = () => {
   
   const handleRemoveItem = (itemId) => {
     setRoomItems(prev => prev.filter(item => item._id !== itemId));
-    setSelectedItem(null);
     
-    const newItems = roomItems.filter(item => item._id !== itemId);
-    localStorage.setItem('roomItems', JSON.stringify(newItems));
+    if (selectedItem === itemId) {
+      setSelectedItem(null);
+    }
+    
+    // If this is from a saved design, mark it as modified
+    if (currentDesign) {
+      setCurrentDesign({
+        ...currentDesign,
+        isModified: true
+      });
+    }
   };
   
   const handleSaveRoom = async () => {
-    if (!roomItems.length) return;
-    
-    setIsSaving(true);
+    if (!authState.isAuthenticated) {
+      navigate('/login', { state: { from: location, message: 'Please login to save design' } });
+      return;
+    }
     
     try {
-      // In a real app, this would save to the backend
-      // const response = await fetch('http://localhost:5001/api/rooms', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${localStorage.getItem('token')}`
-      //   },
-      //   body: JSON.stringify({
-      //     name: 'My Room',
-      //     items: roomItems
-      //   })
-      // });
+      setIsSaving(true);
       
+      const designData = {
+        name: currentDesign?.name || "My Room Design",
+        items: roomItems,
+        wallColors,
+        floorColor,
+        dimensions
+      };
+      
+      let response;
+      let endpoint = 'http://localhost:5001/api/room-designs';
+      let method = 'POST';
+      
+      // If we're updating an existing design
+      if (currentDesign && currentDesign._id) {
+        endpoint = `${endpoint}/${currentDesign._id}`;
+        method = 'PUT';
+      }
+      
+      console.log('Auth token in handleSaveRoom:', authState.token);
+      
+      response = await fetch(endpoint, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(authState.token ? { 'Authorization': `Bearer ${authState.token}` } : {})
+        },
+        body: JSON.stringify(designData),
+        credentials: 'include'
+      });
+      
+      if (response.status === 401) {
+        console.error('Authentication error - redirecting to login');
+        navigate('/login', { state: { from: location, message: 'Your session has expired. Please login again.' } });
+        return;
+      }
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to save room design');
+      }
+      
+      const result = await response.json();
+      
+      // Update current design with the saved version
+      setCurrentDesign(result.data);
+      
+      // Also update in the list of saved designs
+      setSavedDesigns(prev => {
+        const updatedList = [...prev];
+        const existingIndex = updatedList.findIndex(d => d._id === result.data._id);
+        
+        if (existingIndex >= 0) {
+          updatedList[existingIndex] = result.data;
+        } else {
+          updatedList.unshift(result.data);
+        }
+        
+        return updatedList;
+      });
+      
+      // Also update localStorage for backup
       localStorage.setItem('roomItems', JSON.stringify(roomItems));
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
       
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (error) {
-      console.error('Error saving room:', error);
+      console.error('Error saving room design:', error);
+      alert(`Failed to save room design: ${error.message}`);
     } finally {
       setIsSaving(false);
     }
   };
   
   const handleToggleWalls = () => {
-    setShowWalls(prev => !prev);
+    setShowWalls(!showWalls);
+  };
+  
+  const handleResetRoom = () => {
+    if (window.confirm('Are you sure you want to reset the room? All unsaved changes will be lost.')) {
+      setRoomItems([]);
+      setSelectedItem(null);
+      setCurrentDesign(null);
+      localStorage.removeItem('roomItems');
+    }
   };
   
   return (
@@ -231,6 +510,13 @@ const MyRoom = () => {
             disabled={isSaving || !roomItems.length}
           >
             {isSaving ? 'Saving...' : 'Save Room Layout'}
+          </button>
+          <button
+            className="reset-room-btn"
+            onClick={handleResetRoom}
+            style={{ backgroundColor: "#ff6b6b" }}
+          >
+            Reset Room
           </button>
           <button
             className="inventory-btn"
@@ -253,106 +539,73 @@ const MyRoom = () => {
         </div>
       )}
       
-      <div className="room-container">
-        <div className="room-canvas">
-          <Canvas shadows camera={{ position: [0, 10, 15], fov: 50 }} onClick={handleCanvasClick}>
-            <CameraController />
-            <ambientLight intensity={0.5} />
-            <directionalLight 
-              position={[10, 10, 5]} 
-              intensity={1} 
-              castShadow 
-              shadow-mapSize-width={2048} 
-              shadow-mapSize-height={2048}
-            />
+      <div className="my-room-content">
+        <div className="room-container">
+          <Canvas shadows>
+            <ambientLight intensity={0.8} />
+            <pointLight position={[10, 10, 10]} intensity={1} castShadow />
             <Suspense fallback={null}>
-              <Room showWalls={showWalls} />
-              {roomItems.map(item => (
-                <FurnitureModel 
-                  key={item._id}
-                  item={item}
-                  selected={selectedItem === item._id}
-                  onClick={handleSelectItem}
-                  onPositionChange={handlePositionChange}
-                  onRotationChange={handleRotationChange}
-                />
+              <Room showWalls={showWalls} wallColors={wallColors} floorColor={floorColor} dimensions={dimensions} />
+              {roomItems.map((item, index) => (
+                <ModelErrorBoundary key={item._id || index} fallback={<FallbackCube item={item} />}>
+                  <Suspense fallback={<ModelLoadingFallback />}>
+                    <FurnitureModel 
+                      item={item}
+                      selected={selectedItem === item._id}
+                      onClick={handleSelectItem}
+                      onPositionChange={handlePositionChange}
+                      onRotationChange={handleRotationChange}
+                    />
+                  </Suspense>
+                </ModelErrorBoundary>
               ))}
+              <CameraController />
+              <OrbitControls 
+                enablePan={true}
+                enableZoom={true}
+                enableRotate={true}
+                minDistance={2}
+                maxDistance={30}
+                target={[0, 0, 0]}
+                onClick={handleCanvasClick}
+              />
             </Suspense>
-            <OrbitControls 
-              maxPolarAngle={Math.PI / 2} 
-              enablePan 
-              enableZoom 
-              enableRotate 
-            />
-            <gridHelper args={[20, 20]} />
           </Canvas>
         </div>
-        
-        <div className="room-sidebar">
-          <h2>My Furniture</h2>
-          {roomItems.length === 0 ? (
-            <div className="empty-room">
-              <p>Your room is empty. Add furniture from the products page to start designing.</p>
-              <button onClick={() => navigate('/products')}>
-                Browse Furniture Collection
-              </button>
+
+        <div className="saved-designs">
+          <h2>My Saved Designs</h2>
+          {loadingDesigns ? (
+            <div className="loading-designs">Loading saved designs...</div>
+          ) : savedDesigns.length > 0 ? (
+            <div className="designs-list">
+              {savedDesigns.map((design) => (
+                <div 
+                  key={design._id} 
+                  className={`design-item ${currentDesign?._id === design._id ? 'active' : ''}`}
+                  onClick={() => loadDesign(design)}
+                >
+                  <h3>{design.name}</h3>
+                  <p className="design-date">
+                    {new Date(design.createdAt).toLocaleDateString()}
+                  </p>
+                  <div className="design-preview">
+                    <span className="item-count">{design.items.length} items</span>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
-            <ul className="room-items-list">
-              {roomItems.map(item => (
-                <li 
-                  key={item._id} 
-                  className={`room-item ${selectedItem === item._id ? 'selected' : ''}`}
-                  onClick={() => handleSelectItem(item._id)}
-                >
-                  <div className="item-image">
-                    <img 
-                      src={`http://localhost:5001${item.thumbnail}`} 
-                      alt={item.title}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = '/thumbnails/default-thumbnail.jpg';
-                      }}
-                    />
-                  </div>
-                  <div className="item-info">
-                    <span className="item-title">{item.title}</span>
-                    <div className="item-actions">
-                      <button 
-                        className="select-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleSelectItem(item._id);
-                        }}
-                      >
-                        {selectedItem === item._id ? 'Deselect' : 'Select'}
-                      </button>
-                      <button 
-                        className="remove-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemoveItem(item._id);
-                        }}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <div className="no-designs">
+              <p>You haven't saved any room designs yet.</p>
+              <button 
+                className="create-design-btn"
+                onClick={() => navigate('/design')}
+              >
+                Create New Design
+              </button>
+            </div>
           )}
-          
-          <div className="controls-help">
-            <h3>Design Controls</h3>
-            <ul>
-              <li><strong>Select furniture:</strong> Click on an item in the list or in the room</li>
-              <li><strong>Move furniture:</strong> Drag the arrows when an item is selected</li>
-              <li><strong>Rotate view:</strong> Click and drag with right mouse button</li>
-              <li><strong>Zoom:</strong> Use mouse wheel to zoom in/out</li>
-              <li><strong>Pan:</strong> Click and drag with middle mouse button</li>
-            </ul>
-          </div>
         </div>
       </div>
     </div>

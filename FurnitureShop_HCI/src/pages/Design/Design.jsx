@@ -293,13 +293,60 @@ export default function Design() {
     }));
   };
 
-  const handleSaveDesign = () => {
+  const handleSaveDesign = async () => {
     if (!authState.isAuthenticated) {
       navigate('/login', { state: { from: location, message: 'Please login to save design' } });
       return;
     }
-    localStorage.setItem("roomItems", JSON.stringify(roomItems));
-    navigate("/my-room");
+    
+    try {
+      // Show loading indicator if needed
+      
+      // Save to database
+      const designData = {
+        name: designName,
+        items: roomItems,
+        wallColors,
+        floorColor,
+        dimensions
+      };
+      
+      // Log token for debugging
+      console.log('Auth token:', authState.token);
+      
+      const response = await fetch('http://localhost:5001/api/room-designs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Try different token format or check if token exists
+          ...(authState.token ? { 'Authorization': `Bearer ${authState.token}` } : {})
+        },
+        body: JSON.stringify(designData),
+        credentials: 'include'
+      });
+      
+      if (response.status === 401) {
+        console.error('Authentication error - please login again');
+        navigate('/login', { state: { from: location, message: 'Your session has expired. Please login again.' } });
+        return;
+      }
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to save design');
+      }
+      
+      // Also save to localStorage as a backup
+      localStorage.setItem("roomItems", JSON.stringify(roomItems));
+      
+      // Navigate to the my-room page
+      navigate("/my-room");
+    } catch (error) {
+      console.error('Error saving design:', error);
+      // Handle error (show error message)
+      alert('Failed to save design: ' + error.message);
+    }
   };
 
   return (

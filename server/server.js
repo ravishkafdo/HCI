@@ -7,6 +7,7 @@ const connectDB = require("./config/db");
 const setupAdminUser = require("./config/setupAdmin");
 const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
+const roomDesignRoutes = require("./routes/roomDesigns");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 
@@ -64,6 +65,7 @@ uploadDirs.forEach(dir => {
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/room-designs", roomDesignRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
@@ -84,6 +86,11 @@ io.on('connection', (socket) => {
   socket.on('product-update', (data) => {
     io.to('admin-room').emit('product-updated', data);
     io.emit('catalog-updated', { message: 'Product catalog has been updated' });
+  });
+
+  // Notify when room design is created/updated/deleted
+  socket.on('design-update', (data) => {
+    io.emit('design-updated', data);
   });
   
   socket.on('disconnect', () => {

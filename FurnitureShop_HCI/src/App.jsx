@@ -45,6 +45,7 @@ const useAuth = () => {
   const [authState, setAuthState] = useState({
     isAuthenticated: false,
     user: null,
+    token: null,
     isLoading: true,
   });
 
@@ -57,12 +58,14 @@ const useAuth = () => {
         setAuthState({
           isAuthenticated: true,
           user,
+          token,
           isLoading: false,
         });
       } else {
         setAuthState({
           isAuthenticated: false,
           user: null,
+          token: null,
           isLoading: false,
         });
       }
@@ -77,6 +80,7 @@ const useAuth = () => {
     setAuthState({
       isAuthenticated: true,
       user,
+      token,
       isLoading: false,
     });
   };
@@ -87,6 +91,7 @@ const useAuth = () => {
     setAuthState({
       isAuthenticated: false,
       user: null,
+      token: null,
       isLoading: false,
     });
   };
