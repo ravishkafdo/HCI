@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Homepage.css";
 
-// Hero banner images
 const heroImages = [
   "https://t3.ftcdn.net/jpg/07/00/50/82/360_F_700508241_HpTCpfcnQ6EsEebsMEDovyPbV1LZtI45.jpg",
   "https://t4.ftcdn.net/jpg/04/66/25/33/360_F_466253361_c4fAjCqVZD4L2boH8vfqjUbUYk0wLcP7.jpg",
@@ -18,7 +17,6 @@ function Homepage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [fetchError, setFetchError] = useState(null);
 
-  // Auto slide hero banner
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroImages.length);
@@ -26,7 +24,6 @@ function Homepage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Fetch products data
   useEffect(() => {
     const fetchDesigns = async () => {
       try {
@@ -57,7 +54,6 @@ function Homepage() {
     fetchDesigns();
   }, []);
 
-  // Get the 8 most recent products
   const latestProducts = [...designs]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 8);
@@ -76,7 +72,6 @@ function Homepage() {
 
   return (
     <div className="homepage-container">
-      {/* Section 1: Hero Banner */}
       <section className="hero-section">
         <div className="hero-slideshow">
           {heroImages.map((image, index) => (
@@ -111,7 +106,6 @@ function Homepage() {
         </div>
       </section>
 
-      {/* Section 2: Catalog Section */}
       <section className="catalog-section">
         <div className="section-container">
           <div className="category-filter">
@@ -176,7 +170,6 @@ function Homepage() {
         </div>
       </section>
 
-      {/* Section 3: Features Section */}
       <section className="features-section">
         <div className="section-container">
           <h2>Why Choose Our Designs</h2>
@@ -203,7 +196,7 @@ function Homepage() {
       {/* Footer */}
       <footer className="footer">
         <div className="copyright">
-          © {new Date().getFullYear()} Furniture Design Studio. All rights reserved.
+          © {new Date().getFullYear()} Furniture Hub. All rights reserved.
         </div>
         <div className="footer-links">
           <a href="#" className="footer-link">Help</a>

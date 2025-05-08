@@ -57,8 +57,8 @@ const Navbar = () => {
           <Link to="/" className="nav-link">Home</Link>
           <Link to="/products" className="nav-link">Shop</Link>
           <Link to="/design" className="nav-link">Design</Link>
-          <Link to="/my-room" className="nav-link">My Room</Link>
           <Link to="/my-inventory" className="nav-link">My Inventory</Link>
+          <Link to="/my-room" className="nav-link">Saved Rooms</Link>
           {authState.isAuthenticated && (
             <>
               {authState.user?.role === "designer" && (

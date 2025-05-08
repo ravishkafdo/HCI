@@ -354,6 +354,49 @@ const MyRoom = () => {
     if (design.dimensions) setDimensions(design.dimensions);
   };
   
+  const handleDeleteDesign = async (designId, e) => {
+    e.stopPropagation(); // Prevent triggering the loadDesign function
+    
+    if (!window.confirm('Are you sure you want to delete this design? This action cannot be undone.')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`http://localhost:5001/api/room-designs/${designId}`, {
+        method: 'DELETE',
+        headers: {
+          ...(authState.token ? { 'Authorization': `Bearer ${authState.token}` } : {})
+        },
+        credentials: 'include'
+      });
+      
+      if (response.status === 401) {
+        navigate('/login', { state: { from: location, message: 'Your session has expired. Please login again.' } });
+        return;
+      }
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete design');
+      }
+      
+      // Remove the design from the list
+      setSavedDesigns(prev => prev.filter(design => design._id !== designId));
+      
+      // If the deleted design was currently loaded, reset the room
+      if (currentDesign?._id === designId) {
+        setCurrentDesign(null);
+        setRoomItems([]);
+      }
+      
+      // Show success message
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (error) {
+      console.error('Error deleting design:', error);
+      alert(`Failed to delete design: ${error.message}`);
+    }
+  };
+  
   const handlePositionChange = (itemId, position) => {
     setRoomItems(prev => 
       prev.map(item => 
@@ -496,7 +539,7 @@ const MyRoom = () => {
   return (
     <div className="my-room-page">
       <div className="room-header">
-        <h1>My Custom Room Design</h1>
+        <h1>Room Designs</h1>
         <div className="room-actions">
           <button
             className="toggle-walls-btn"
@@ -585,7 +628,23 @@ const MyRoom = () => {
                   className={`design-item ${currentDesign?._id === design._id ? 'active' : ''}`}
                   onClick={() => loadDesign(design)}
                 >
-                  <h3>{design.name}</h3>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h3>{design.name}</h3>
+                    <button 
+                      onClick={(e) => handleDeleteDesign(design._id, e)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#ff5252',
+                        cursor: 'pointer',
+                        padding: '0.25rem',
+                        fontSize: '1rem'
+                      }}
+                      title="Delete design"
+                    >
+                      ×
+                    </button>
+                  </div>
                   <p className="design-date">
                     {new Date(design.createdAt).toLocaleDateString()}
                   </p>
