@@ -22,8 +22,7 @@ const Wall = React.forwardRef(({ colorInstance, geometryArgs, ...props }, ref) =
   );
 });
 
-
-const Room = ({ wallColors, floorColor, dimensions }) => {
+const Room = ({ wallColors, floorColor, ceilingColor, dimensions }) => {
   const frontWallRef = useRef();
   const backWallRef = useRef();
   const leftWallRef = useRef();
@@ -40,6 +39,7 @@ const Room = ({ wallColors, floorColor, dimensions }) => {
   }), [wallColors]);
 
   const memoizedFloorColor = useMemo(() => new THREE.Color(floorColor), [floorColor]);
+  const memoizedCeilingColor = useMemo(() => new THREE.Color(ceilingColor), [ceilingColor]);
 
   // Improved wall visibility handling
   useFrame(({ camera }) => {
@@ -95,15 +95,16 @@ const Room = ({ wallColors, floorColor, dimensions }) => {
 
   return (
     <group>
-      {/* Floor and ceiling */}
+      {/* Floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
         <planeGeometry args={[width, depth]} />
         <meshStandardMaterial color={memoizedFloorColor} side={THREE.DoubleSide} />
       </mesh>
 
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, height, 0]}>
+      {/* Ceiling */}
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, height, 0]} receiveShadow>
         <planeGeometry args={[width, depth]} />
-        <meshStandardMaterial color="#f5f5f5" side={THREE.DoubleSide} />
+        <meshStandardMaterial color={memoizedCeilingColor} side={THREE.DoubleSide} />
       </mesh>
 
       {/* All four walls */}
@@ -136,7 +137,6 @@ const Room = ({ wallColors, floorColor, dimensions }) => {
     </group>
   );
 };
-
 
 // Model component for furniture
 const Model = ({ url, position, rotation, onClick, scale = 1 }) => {
@@ -202,7 +202,6 @@ const TwoDView = ({ dimensions, roomItems }) => {
 };
 
 export default function Design() {
-
   const { authState } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
@@ -219,6 +218,7 @@ export default function Design() {
     left: "#D3D3D3", right: "#D3D3D3",
   });
   const [floorColor, setFloorColor] = useState("#BFBFBF");
+  const [ceilingColor, setCeilingColor] = useState("#f5f5f5");
   const [dimensions, setDimensions] = useState({
     width: 20,
     depth: 20,
@@ -308,6 +308,7 @@ export default function Design() {
         items: roomItems,
         wallColors,
         floorColor,
+        ceilingColor,
         dimensions
       };
       
@@ -318,7 +319,6 @@ export default function Design() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Try different token format or check if token exists
           ...(authState.token ? { 'Authorization': `Bearer ${authState.token}` } : {})
         },
         body: JSON.stringify(designData),
@@ -438,6 +438,7 @@ export default function Design() {
                 <Room 
                   wallColors={wallColors} 
                   floorColor={floorColor}
+                  ceilingColor={ceilingColor}
                   dimensions={dimensions}
                 />
 
@@ -605,11 +606,32 @@ export default function Design() {
               />
             </div>
             
+            {/* Ceiling Color Section */}
+            <div className="floor-color-section">
+              <h4>Ceiling Color</h4>
+              <div className="color-presets">
+                {['#f5f5f5', '#e0e0e0', '#bdbdbd', '#9e9e9e', '#ffffff', '#e1bee7', '#bbdefb', '#c8e6c9'].map(c => (
+                  <div 
+                    key={`ceiling-${c}`} 
+                    className={`color-preset ${ceilingColor === c ? 'selected' : ''}`} 
+                    style={{ backgroundColor: c }} 
+                    onClick={() => setCeilingColor(c)} 
+                  />
+                ))}
+              </div>
+              <input 
+                type="color" 
+                value={ceilingColor} 
+                onChange={(e) => setCeilingColor(e.target.value)} 
+                className="color-input" 
+              />
+            </div>
+            
             {/* Room Dimensions Section */}
             <div className="room-dimensions">
-              <h4>Room Dimensions</h4>
+              <h4>Room Dimensions (meters)</h4>
               <div className="dimension-control">
-                <label>Width (meters)</label>
+                <label>Width</label>
                 <input 
                   type="number" 
                   min="5" 
@@ -620,7 +642,7 @@ export default function Design() {
                 />
               </div>
               <div className="dimension-control">
-                <label>Depth (meters)</label>
+                <label>Depth</label>
                 <input 
                   type="number" 
                   min="5" 
@@ -631,7 +653,7 @@ export default function Design() {
                 />
               </div>
               <div className="dimension-control">
-                <label>Height (meters)</label>
+                <label>Height</label>
                 <input 
                   type="number" 
                   min="2.5" 
