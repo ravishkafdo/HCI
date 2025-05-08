@@ -216,19 +216,23 @@
   height: 100%;
 }
 
-/* Panel Styles */
-.catalog-panel,
-.colors-panel,
-.wall-colors-panel {
+.catalog-panel, .colors-panel, .wall-colors-panel {
   width: 340px;
   height: 100%;
   background-color: white;
   border-left: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  overflow-y: auto;
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
 }
+
+.catalog-panel::-webkit-scrollbar,
+.colors-panel::-webkit-scrollbar,
+.wall-colors-panel::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
 
 .panel-header {
   padding: 1.25rem;
