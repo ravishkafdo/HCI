@@ -7,7 +7,7 @@ const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    userType: "designer" // Default to designer
+    userType: "designer" 
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +33,6 @@ const Login = () => {
     try {
       console.log("Attempting login with:", formData.email);
       
-      // Use the real backend authentication
       const response = await fetch("http://localhost:5001/api/auth/login", {
         method: "POST",
         headers: {
@@ -54,18 +53,15 @@ const Login = () => {
         throw new Error(data.message || "Login failed");
       }
 
-      // Save token and user data to localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       
-      // Call the login function from context
       login(data.token, data.user);
       
       console.log("Authentication successful, redirecting...");
       console.log("fromDesign:", fromDesign);
       console.log("User role:", data.user.role);
       
-      // Redirect based on priority: design redirect first, then role-based
       setTimeout(() => {
         if (fromAdmin && data.user.role === 'admin') {
           console.log("Redirecting to admin dashboard");
@@ -80,7 +76,7 @@ const Login = () => {
           console.log("Redirecting to home page");
           navigate("/");
         }
-      }, 100); // Short delay to ensure context updates
+      }, 100); 
     } catch (error) {
       console.error("Login Error:", error);
       setError(error.message || "Login failed. Please try again.");
@@ -155,12 +151,6 @@ const Login = () => {
         <div className="auth-footer">
           Don't have an account?{" "}
           <span onClick={() => navigate("/register")}>Register</span>
-        </div>
-        
-        <div className="auth-note">
-          <p>For demo purposes, use:</p>
-          <p>Admin: admin@example.com / adminpass</p>
-          <p>Designer: designer@example.com / password</p>
         </div>
       </form>
     </div>

@@ -193,7 +193,6 @@ function Homepage() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="footer">
         <div className="copyright">
           © {new Date().getFullYear()} Furniture Hub. All rights reserved.

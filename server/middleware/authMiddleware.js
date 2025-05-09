@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const User = require('../models/User');
 
 exports.authenticate = (req, res, next) => {
-  // Get token from header or cookie
   const token = req.header("x-auth-token") || req.cookies?.token;
 
   if (!token) {
@@ -18,21 +17,17 @@ exports.authenticate = (req, res, next) => {
   }
 };
 
-// Middleware to protect routes
 exports.protect = async (req, res, next) => {
   try {
     let token;
     
-    // Get token from Authorization header
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
     } 
-    // Get token from cookie
     else if (req.cookies && req.cookies.token) {
       token = req.cookies.token;
     }
     
-    // Check if token exists
     if (!token) {
       return res.status(401).json({
         success: false,
@@ -40,13 +35,10 @@ exports.protect = async (req, res, next) => {
       });
     }
     
-    // Verify token
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       
-      // Check if this is the hardcoded admin account
       if (decoded.id === '645f1c5b3c8c1234567890ab') {
-        // Set admin user manually
         req.user = {
           _id: '645f1c5b3c8c1234567890ab',
           name: 'Admin User',
@@ -56,7 +48,6 @@ exports.protect = async (req, res, next) => {
         return next();
       }
       
-      // Get user from database for regular users
       const user = await User.findById(decoded.id).select('-password');
       
       if (!user) {
@@ -66,7 +57,6 @@ exports.protect = async (req, res, next) => {
         });
       }
       
-      // Attach user to request object
       req.user = user;
       next();
     } catch (error) {
@@ -85,7 +75,6 @@ exports.protect = async (req, res, next) => {
 };
 
 
-// Middleware to restrict routes to admins only
 exports.adminOnly = (req, res, next) => {
   if (req.user && req.user.role === 'admin') {
     next();
@@ -97,7 +86,6 @@ exports.adminOnly = (req, res, next) => {
   }
 };
 
-// Middleware to restrict routes to designers only
 exports.designerOnly = (req, res, next) => {
   if (req.user && (req.user.role === 'designer' || req.user.role === 'admin')) {
     next();

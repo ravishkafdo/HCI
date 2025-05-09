@@ -4,7 +4,6 @@ const RoomDesign = require('../models/RoomDesign');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 
-// Middleware to verify authentication token
 const authenticate = async (req, res, next) => {
   try {
     console.log('Auth headers:', req.headers.authorization);
@@ -12,12 +11,10 @@ const authenticate = async (req, res, next) => {
     
     let token;
     
-    // Check Authorization header (Bearer token)
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
       console.log('Found token in Authorization header');
     } 
-    // Check cookies
     else if (req.cookies && req.cookies.token) {
       token = req.cookies.token;
       console.log('Found token in cookies');
@@ -60,7 +57,6 @@ const authenticate = async (req, res, next) => {
   }
 };
 
-// Create a new room design
 router.post('/', authenticate, async (req, res) => {
   try {
     const { name, items, wallColors, floorColor, dimensions } = req.body;
@@ -90,7 +86,6 @@ router.post('/', authenticate, async (req, res) => {
   }
 });
 
-// Get all room designs for a user
 router.get('/', authenticate, async (req, res) => {
   try {
     const roomDesigns = await RoomDesign.find({ userId: req.userId }).sort({ createdAt: -1 });
@@ -110,7 +105,6 @@ router.get('/', authenticate, async (req, res) => {
   }
 });
 
-// Get a specific room design
 router.get('/:id', authenticate, async (req, res) => {
   try {
     const roomDesign = await RoomDesign.findById(req.params.id);
@@ -122,7 +116,6 @@ router.get('/:id', authenticate, async (req, res) => {
       });
     }
     
-    // Ensure the user owns this design
     if (roomDesign.userId.toString() !== req.userId) {
       return res.status(403).json({
         success: false,
@@ -144,7 +137,6 @@ router.get('/:id', authenticate, async (req, res) => {
   }
 });
 
-// Update a room design
 router.put('/:id', authenticate, async (req, res) => {
   try {
     const { name, items, wallColors, floorColor, dimensions } = req.body;
@@ -158,7 +150,6 @@ router.put('/:id', authenticate, async (req, res) => {
       });
     }
     
-    // Ensure the user owns this design
     if (roomDesign.userId.toString() !== req.userId) {
       return res.status(403).json({
         success: false,
@@ -186,7 +177,6 @@ router.put('/:id', authenticate, async (req, res) => {
   }
 });
 
-// Delete a room design
 router.delete('/:id', authenticate, async (req, res) => {
   try {
     const roomDesign = await RoomDesign.findById(req.params.id);
@@ -198,7 +188,6 @@ router.delete('/:id', authenticate, async (req, res) => {
       });
     }
     
-    // Ensure the user owns this design
     if (roomDesign.userId.toString() !== req.userId) {
       return res.status(403).json({
         success: false,

@@ -1,6 +1,5 @@
 const Product = require('../models/Product');
 
-// Get all products with filters and pagination
 exports.getProducts = async (req, res) => {
   try {
     const { 
@@ -12,23 +11,18 @@ exports.getProducts = async (req, res) => {
       search
     } = req.query;
     
-    // Build filter
     const filter = {};
     if (category && category !== 'All') filter.category = category;
     
-    // Add search functionality
     if (search) {
       filter.$text = { $search: search };
     }
     
-    // Count total documents for pagination
     const total = await Product.countDocuments(filter);
     
-    // Build sort object
     const sortObj = {};
     sortObj[sort] = order === 'desc' ? -1 : 1;
     
-    // Execute query with pagination
     const products = await Product.find(filter)
       .sort(sortObj)
       .skip((page - 1) * limit)
@@ -51,7 +45,6 @@ exports.getProducts = async (req, res) => {
   }
 };
 
-// Get a single product by ID
 exports.getProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -76,14 +69,11 @@ exports.getProduct = async (req, res) => {
   }
 };
 
-// Create a new product
 exports.createProduct = async (req, res) => {
   try {
-    // Debug logs
     console.log("Creating product - request body:", JSON.stringify(req.body, null, 2));
     console.log("User in request:", req.user);
     
-    // Validate required fields
     const {
       title,
       description,
@@ -131,7 +121,6 @@ exports.createProduct = async (req, res) => {
   }
 };
 
-// Update a product
 exports.updateProduct = async (req, res) => {
   try {
     const productId = req.params.id;
@@ -145,7 +134,6 @@ exports.updateProduct = async (req, res) => {
       });
     }
     
-    // Update the product
     product = await Product.findByIdAndUpdate(
       productId,
       req.body,
@@ -165,7 +153,6 @@ exports.updateProduct = async (req, res) => {
   }
 };
 
-// Delete a product
 exports.deleteProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);

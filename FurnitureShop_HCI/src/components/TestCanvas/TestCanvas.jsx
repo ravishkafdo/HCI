@@ -9,7 +9,6 @@ export default function TestCanvas() {
         <pointLight position={[10, 10, 10]} />
         <OrbitControls />
         
-        {/* Simple red box */}
         <mesh>
           <boxGeometry args={[1, 1, 1]} />
           <meshStandardMaterial color="red" />

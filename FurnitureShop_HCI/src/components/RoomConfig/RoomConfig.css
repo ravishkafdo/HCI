@@ -93,7 +93,6 @@
   margin: 15px 0 10px;
 }
 
-/* Room shape options */
 .shape-options {
   display: flex;
   gap: 15px;
@@ -157,7 +156,6 @@
   border-radius: 50%;
 }
 
-/* Room size inputs */
 .dimension-input {
   display: flex;
   align-items: center;
@@ -189,7 +187,6 @@
   border-left: 1px solid #ddd;
 }
 
-/* Color scheme */
 .color-option {
   display: flex;
   align-items: center;
@@ -232,7 +229,6 @@
   z-index: -1;
 }
 
-/* Draggable furniture */
 .furniture-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

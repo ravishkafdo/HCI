@@ -87,7 +87,6 @@
   transform: translateY(-50%) scale(1.05);
 }
 
-/* Filters Container */
 .filters-container {
   display: flex;
   flex-direction: column;
@@ -101,7 +100,6 @@
   font-size: 0.95rem;
 }
 
-/* Category Dropdown Styles */
 .category-filter-container {
   position: relative;
   display: flex;
@@ -172,7 +170,6 @@
   color: white;
 }
 
-/* Product Grid */
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -258,7 +255,6 @@
   background-color: #5649c0;
 }
 
-/* Loading and Error States */
 .loading-container,
 .error-message,
 .no-products {
@@ -312,7 +308,6 @@
   font-size: 1.1rem;
 }
 
-/* Responsive Styles */
 @media (max-width: 768px) {
   .products-page {
     width: 90%;

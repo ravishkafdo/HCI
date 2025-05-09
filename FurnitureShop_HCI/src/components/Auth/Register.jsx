@@ -25,7 +25,6 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      // Basic validation
       if (!formData.name || !formData.email || !formData.password) {
         throw new Error("All fields are required");
       }
@@ -44,11 +43,9 @@ const Register = () => {
         throw new Error(data.message || "Registration failed");
       }
 
-      // Save token and user data
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // Redirect to dashboard
       navigate("/login");
     } catch (error) {
       console.error("Registration Error:", error);

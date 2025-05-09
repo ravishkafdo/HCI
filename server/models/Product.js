@@ -66,7 +66,6 @@ const ProductSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Create a text index for search
 ProductSchema.index({ title: 'text', description: 'text', category: 'text' });
 
 module.exports = mongoose.model('Product', ProductSchema); 

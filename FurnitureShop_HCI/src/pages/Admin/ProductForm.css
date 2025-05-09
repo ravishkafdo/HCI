@@ -1,4 +1,3 @@
-/* ProductForm.css - Redesigned to match theme */
 .product-form-container {
   max-width: 1400px;
   margin: 0 auto;
@@ -7,7 +6,6 @@
   min-height: calc(100vh - 60px);
 }
 
-/* Form Header */
 .form-header {
   display: flex;
   justify-content: space-between;
@@ -29,7 +27,6 @@
   gap: 1rem;
 }
 
-/* Form Layout */
 .product-form {
   display: flex;
   flex-direction: column;
@@ -64,7 +61,6 @@
   font-weight: 600;
 }
 
-/* Form Groups and Inputs */
 .form-group {
   margin-bottom: 1.5rem;
 }
@@ -108,7 +104,6 @@
   margin-bottom: 0;
 }
 
-/* Array Fields (Materials, Colors) */
 .array-row {
   align-items: center;
   gap: 1rem;
@@ -161,7 +156,6 @@
   transform: none;
 }
 
-/* Color Input Group */
 .color-input-group {
   display: flex;
   gap: 1rem;
@@ -176,7 +170,6 @@
   cursor: pointer;
 }
 
-/* Checkbox Styles */
 .checkbox-row {
   margin-top: 1.5rem;
   display: flex;
@@ -198,7 +191,6 @@
   accent-color: #6c5ce7;
 }
 
-/* File Upload */
 .file-upload {
   margin-bottom: 1.5rem;
 }
@@ -237,7 +229,6 @@
   border-color: #ccc;
 }
 
-/* Image Previews */
 .image-preview {
   width: 120px;
   height: 120px;
@@ -275,7 +266,6 @@
   font-size: 1.5rem;
 }
 
-/* Footer */
 .form-footer {
   display: flex;
   justify-content: flex-end;
@@ -285,7 +275,6 @@
   border-top: 1px solid #eee;
 }
 
-/* Buttons */
 .cancel-btn,
 .save-btn {
   padding: 1rem 2rem;
@@ -328,7 +317,6 @@
   box-shadow: none;
 }
 
-/* Messages */
 .required {
   color: #ff5252;
   font-weight: bold;

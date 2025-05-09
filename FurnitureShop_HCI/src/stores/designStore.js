@@ -1,4 +1,3 @@
-// src/stores/designStore.js
 import { create } from "zustand";
 
 export const useDesignStore = create((set) => ({
@@ -7,7 +6,6 @@ export const useDesignStore = create((set) => ({
   selectedFurniture: null,
   is3DView: true,
   
-  // Extended furniture details
   furnitureCategories: [
     "Bed", "Sofa", "Chair", "Table", "Storage", "Decor", "Lighting"
   ],
@@ -33,24 +31,19 @@ export const useDesignStore = create((set) => ({
     ]
   },
   
-  // Actions
   setRoom: (room) => set({ room }),
   
   addFurniture: (item) =>
     set((state) => {
-      // Generate a unique ID if not provided
       const id = item.id || Date.now().toString();
       
-      // Ensure position is valid
       const position = item.position || { x: 0, y: 0, z: 0 };
       
-      // Center the furniture in the room if room exists
       if (state.room && (!position.x && !position.z)) {
-        position.x = 0; // Center X
-        position.z = 0; // Center Z
+        position.x = 0; 
+        position.z = 0; 
       }
       
-      // Ensure furniture item has all required properties
       const enhancedItem = {
         ...item,
         id,
@@ -80,14 +73,12 @@ export const useDesignStore = create((set) => ({
     
   selectFurniture: (item) => {
     console.log("Selecting furniture:", item);
-    // Create a deep copy if item exists to ensure reactivity
     const selectedItem = item ? { ...item, position: { ...item.position } } : null;
     set({ selectedFurniture: selectedItem });
   },
   
   updateFurniture: (id, updates) =>
     set((state) => {
-      // Handle nested detail updates
       const updatedFurniture = state.furniture.map((f) => {
         if (f.id === id) {
           if (updates.details) {
@@ -102,7 +93,6 @@ export const useDesignStore = create((set) => ({
         return f;
       });
       
-      // Update selected furniture if it's the one being modified
       let updatedSelected = state.selectedFurniture;
       if (state.selectedFurniture?.id === id) {
         if (updates.details) {

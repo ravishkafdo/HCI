@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# This script creates an admin user for the furniture design system
-# It requires curl to make HTTP requests
-
-# Default values
 NAME="Admin User"
 EMAIL="admin@example.com"
 PASSWORD="adminpass"

@@ -93,7 +93,6 @@
   width: 100%;
 }
 
-/* Auth Section */
 .navbar-auth {
   position: relative;
 }
@@ -139,7 +138,6 @@
   transform: translateY(-1px);
 }
 
-/* Profile Section */
 .profile-section {
   position: relative;
 }
@@ -268,7 +266,6 @@
   padding-left: 1.2rem;
 }
 
-/* Mobile Menu */
 .menu-toggle {
   display: none;
   background: none;
@@ -318,7 +315,6 @@
   border-bottom: none;
 }
 
-/* Animation Keyframes */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -335,7 +331,6 @@
   }
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .desktop-nav {
     display: none;

@@ -11,7 +11,6 @@ const roomDesignRoutes = require("./routes/roomDesigns");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 
-// Verify JWT_SECRET is loaded
 if (!process.env.JWT_SECRET) {
   console.error("FATAL ERROR: JWT_SECRET is not defined");
   process.exit(1);
@@ -20,7 +19,6 @@ if (!process.env.JWT_SECRET) {
 const app = express();
 const httpServer = createServer(app);
 
-// Initialize Socket.io
 const io = new Server(httpServer, {
   cors: {
     origin: "http://localhost:5173",
@@ -28,9 +26,7 @@ const io = new Server(httpServer, {
   }
 });
 
-// Database connection
 connectDB().then(() => {
-  // Set up default admin user after DB connection
   if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
     setupAdminUser();
   }
@@ -39,7 +35,6 @@ connectDB().then(() => {
   process.exit(1);
 });
 
-// Middleware
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -49,10 +44,8 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-// Set up static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Ensure upload directories exist
 const fs = require('fs');
 const uploadDirs = ['uploads', 'uploads/images', 'uploads/models'];
 uploadDirs.forEach(dir => {
@@ -62,33 +55,27 @@ uploadDirs.forEach(dir => {
   }
 });
 
-// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/room-designs", roomDesignRoutes);
 
-// Health check
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", timestamp: new Date() });
 });
 
-// Socket.io events
 io.on('connection', (socket) => {
   console.log('Client connected:', socket.id);
   
-  // Join admin room for real-time updates
   socket.on('join-admin', () => {
     socket.join('admin-room');
     console.log(`${socket.id} joined admin room`);
   });
   
-  // Notify when product is created/updated/deleted
   socket.on('product-update', (data) => {
     io.to('admin-room').emit('product-updated', data);
     io.emit('catalog-updated', { message: 'Product catalog has been updated' });
   });
 
-  // Notify when room design is created/updated/deleted
   socket.on('design-update', (data) => {
     io.emit('design-updated', data);
   });
@@ -98,7 +85,6 @@ io.on('connection', (socket) => {
   });
 });
 
-// Error handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({

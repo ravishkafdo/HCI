@@ -14,7 +14,6 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['user', 'designer', 'admin'], default: 'user' },
 });
 
-// Password hashing middleware
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
@@ -27,7 +26,6 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-// Password comparison method
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };

@@ -10,7 +10,6 @@ function ProductForm() {
   const isEditMode = !!id;
   const navigate = useNavigate();
   
-  // Product Form State
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -27,29 +26,24 @@ function ProductForm() {
     featured: false
   });
   
-  // Files State
   const [files, setFiles] = useState({
     thumbnail: null,
     images: [],
     model: null
   });
   
-  // File Previews
   const [previews, setPreviews] = useState({
     thumbnail: "",
     images: [],
     model: ""
   });
   
-  // Loading and Error States
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   
-  // Categories
   const categories = ["Living Room", "Bedroom", "Dining Room", "Office", "Storage"];
   
-  // Fetch product data if in edit mode
   useEffect(() => {
     if (isEditMode) {
       fetchProduct();
@@ -70,7 +64,6 @@ function ProductForm() {
       if (data.success && data.product) {
         const product = data.product;
         
-        // Set form data from product
         setFormData({
           title: product.title || "",
           description: product.description || "",
@@ -87,7 +80,6 @@ function ProductForm() {
           featured: product.featured || false
         });
         
-        // Set previews for existing files
         setPreviews({
           thumbnail: product.thumbnail ? `http://localhost:5001${product.thumbnail}` : "",
           images: product.images ? product.images.map(img => `http://localhost:5001${img}`) : [],
@@ -102,7 +94,6 @@ function ProductForm() {
     }
   };
   
-  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     
@@ -119,7 +110,6 @@ function ProductForm() {
     }
   };
   
-  // Handle dimension changes
   const handleDimensionChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -131,7 +121,6 @@ function ProductForm() {
     });
   };
   
-  // Handle materials and colors changes
   const handleArrayFieldChange = (e, index, field) => {
     const { value } = e.target;
     const updatedArray = [...formData[field]];
@@ -143,7 +132,6 @@ function ProductForm() {
     });
   };
   
-  // Add new item to array fields
   const handleAddArrayItem = (field) => {
     setFormData({
       ...formData,
@@ -151,7 +139,6 @@ function ProductForm() {
     });
   };
   
-  // Remove item from array fields
   const handleRemoveArrayItem = (index, field) => {
     const updatedArray = [...formData[field]];
     updatedArray.splice(index, 1);
@@ -162,18 +149,15 @@ function ProductForm() {
     });
   };
   
-  // Handle file inputs
   const handleFileChange = (e) => {
     const { name, files: selectedFiles } = e.target;
     
     if (name === "images") {
-      // For multiple images
       setFiles({
         ...files,
         [name]: selectedFiles
       });
       
-      // Create previews for multiple images
       const imagePreviews = [];
       for (let i = 0; i < selectedFiles.length; i++) {
         imagePreviews.push(URL.createObjectURL(selectedFiles[i]));
@@ -184,13 +168,11 @@ function ProductForm() {
         [name]: imagePreviews
       });
     } else {
-      // For single files (thumbnail or 3D model)
       setFiles({
         ...files,
         [name]: selectedFiles[0]
       });
       
-      // Create preview for single file
       if (selectedFiles[0]) {
         setPreviews({
           ...previews,
@@ -200,7 +182,6 @@ function ProductForm() {
     }
   };
   
-  // Form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -209,52 +190,42 @@ function ProductForm() {
       setError("");
       setSuccess("");
       
-      // Validate form
       if (!formData.title || !formData.description || !formData.price || !formData.category) {
         setError("Please fill in all required fields");
         setLoading(false);
         return;
       }
       
-      // Validate dimensions
       if (!formData.dimensions.width || !formData.dimensions.height || !formData.dimensions.length) {
         setError("Please provide all dimension measurements");
         setLoading(false);
         return;
       }
       
-      // In create mode, require thumbnail and 3D model
       if (!isEditMode && (!files.thumbnail || !files.model)) {
         setError("Please upload a thumbnail image and 3D model");
         setLoading(false);
         return;
       }
       
-      // Prepare form data for submission
       const productFormData = new FormData();
       
-      // Add basic fields
       productFormData.append("title", formData.title);
       productFormData.append("description", formData.description);
       productFormData.append("price", formData.price);
       productFormData.append("category", formData.category);
       
-      // Add dimensions as JSON
       productFormData.append("dimensions", JSON.stringify(formData.dimensions));
       
-      // Filter out empty values from arrays
       const filteredMaterials = formData.materials.filter(item => item.trim() !== "");
       const filteredColors = formData.colors.filter(item => item.trim() !== "");
       
-      // Add arrays
       productFormData.append("materials", JSON.stringify(filteredMaterials));
       productFormData.append("colors", JSON.stringify(filteredColors));
       
-      // Add boolean fields
       productFormData.append("inStock", formData.inStock);
       productFormData.append("featured", formData.featured);
       
-      // Add files
       if (files.thumbnail) {
         productFormData.append("thumbnail", files.thumbnail);
       }
@@ -263,14 +234,12 @@ function ProductForm() {
         productFormData.append("model", files.model);
       }
       
-      // Add multiple images
       if (files.images && files.images.length > 0) {
         for (let i = 0; i < files.images.length; i++) {
           productFormData.append("images", files.images[i]);
         }
       }
       
-      // Get auth token from localStorage
       const token = localStorage.getItem("token");
       
       if (!token) {
@@ -279,14 +248,12 @@ function ProductForm() {
         return;
       }
       
-      // API endpoint and method based on create/edit mode
       const url = isEditMode 
         ? `http://localhost:5001/api/products/${id}`
         : "http://localhost:5001/api/products";
       
       const method = isEditMode ? "PUT" : "POST";
       
-      // Submit form with proper authentication
       const response = await fetch(url, {
         method: method,
         headers: {
@@ -301,16 +268,13 @@ function ProductForm() {
         throw new Error(data.message || "Failed to save product");
       }
       
-      // Success handling
       setSuccess(isEditMode ? "Product updated successfully" : "Product created successfully");
       
-      // Emit socket event for real-time update
       socket.emit("product-update", { 
         action: isEditMode ? "update" : "create", 
         message: isEditMode ? "Product updated successfully" : "New product added" 
       });
       
-      // Redirect after a short delay
       setTimeout(() => {
         navigate("/admin");
       }, 1500);
@@ -340,7 +304,6 @@ function ProductForm() {
       )}
       
       <form className="product-form" onSubmit={handleSubmit}>
-        {/* Basic Information */}
         <div className="form-section">
           <h2>Product Details</h2>
           
@@ -474,7 +437,6 @@ function ProductForm() {
           </div>
         </div>
         
-        {/* Materials */}
         <div className="form-section">
           <h2>Materials</h2>
           
@@ -509,7 +471,6 @@ function ProductForm() {
           </button>
         </div>
         
-        {/* Colors */}
         <div className="form-section">
           <h2>Colors</h2>
           
@@ -549,7 +510,6 @@ function ProductForm() {
           </button>
         </div>
         
-        {/* Images */}
         <div className="form-section">
           <h2>Images</h2>
           
@@ -605,7 +565,6 @@ function ProductForm() {
           </div>
         </div>
         
-        {/* 3D Model */}
         <div className="form-section">
           <h2>3D Model</h2>
           
